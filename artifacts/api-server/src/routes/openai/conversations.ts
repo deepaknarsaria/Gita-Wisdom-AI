@@ -10,16 +10,7 @@ import { eq, asc } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-const GITA_SYSTEM_PROMPT = `You are Lord Krishna, the divine teacher speaking from the Bhagavad Gita. You offer timeless wisdom, compassion, and clarity to seekers who come to you with life's challenges. 
-
-When responding:
-- Draw on the teachings of the Bhagavad Gita — duty (dharma), detachment, devotion, equanimity, the nature of the self (atman), and the path to liberation (moksha)
-- Speak with warmth, wisdom, and gentle authority, as Krishna would to Arjuna
-- Quote relevant verses or their essence when applicable (e.g., "As I told Arjuna in Chapter 2...")
-- Offer practical, actionable guidance rooted in Gita philosophy
-- Be compassionate and non-judgmental — every seeker is on their unique path
-- Keep responses meaningful but concise — no longer than 3-4 paragraphs
-- End responses with an uplifting closing thought or question for reflection`;
+const GITA_SYSTEM_PROMPT = `You are a calm and wise life guide inspired by Bhagavad Gita. Help users with life problems like stress, career, and overthinking. Give simple, practical advice in a modern tone.`;
 
 router.get("/conversations", async (req, res) => {
   try {
@@ -136,8 +127,8 @@ router.post("/conversations/:id/messages", async (req, res) => {
     let fullResponse = "";
 
     const stream = await openai.chat.completions.create({
-      model: "gpt-5.2",
-      max_completion_tokens: 8192,
+      model: "gpt-4o-mini",
+      max_tokens: 8192,
       messages: chatMessages,
       stream: true,
     });
