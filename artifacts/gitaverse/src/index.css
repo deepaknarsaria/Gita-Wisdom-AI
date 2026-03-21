@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme inline {
+  --font-display: 'Cinzel', serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+
+  --color-background: hsl(40, 33%, 98%);
+  --color-foreground: hsl(24, 20%, 25%);
+  --color-primary: hsl(32, 85%, 55%);
+  --color-primary-foreground: hsl(0, 0%, 100%);
+  --color-secondary: hsl(35, 40%, 92%);
+  --color-secondary-foreground: hsl(24, 20%, 25%);
+  --color-muted: hsl(35, 20%, 90%);
+  --color-muted-foreground: hsl(24, 10%, 45%);
+  --color-accent: hsl(15, 70%, 65%);
+  --color-accent-foreground: hsl(0, 0%, 100%);
+  --color-destructive: hsl(0, 84%, 60%);
+  --color-destructive-foreground: hsl(0, 0%, 100%);
+  --color-border: hsl(35, 25%, 88%);
+  --color-ring: hsl(32, 85%, 55%);
+  --color-card: hsl(0, 0%, 100%);
+  --color-card-foreground: hsl(24, 20%, 25%);
+}
+
+:root {
+  --background: 40 33% 98%;
+  --foreground: 24 20% 25%;
+  --primary: 32 85% 55%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 35 40% 92%;
+  --secondary-foreground: 24 20% 25%;
+  --muted: 35 20% 90%;
+  --muted-foreground: 24 10% 45%;
+  --accent: 15 70% 65%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 35 25% 88%;
+  --ring: 32 85% 55%;
+  --card: 0 0% 100%;
+  --card-foreground: 24 20% 25%;
+  --radius: 1rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased font-sans;
+    background-image: radial-gradient(circle at 50% 0%, hsl(35 60% 98%), hsl(40 33% 96%));
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-foreground;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-xl shadow-orange-900/5;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-white/50 shadow-lg shadow-orange-900/5;
+  }
+}
+
+/* Custom scrollbar for chat area */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted));
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--muted-foreground) / 0.5);
+}

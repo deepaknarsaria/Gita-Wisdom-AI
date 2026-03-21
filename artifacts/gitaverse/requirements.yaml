@@ -1,0 +1,12 @@
+packages:
+  "framer-motion": "For smooth page transitions and beautiful animations"
+  "react-markdown": "For rendering AI responses formatted in markdown"
+
+images:
+  - path: "artifacts/gitaverse/public/images/hero-bg.png"
+    description: "A soft, abstract ethereal background with warm saffron, light beige, and glowing gold hues, subtle minimal lotus motifs fading into the background, highly elegant and clean"
+    aspect_ratio: "16:9"
+
+notes:
+  - Streaming uses Server-Sent Events (SSE) via the fetch API
+  - The API exposes generated react-query hooks from @workspace/api-client-react
