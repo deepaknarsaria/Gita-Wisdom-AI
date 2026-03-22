@@ -49,18 +49,16 @@ export default function Chat() {
     scrollToBottom();
   }, [conversation?.messages, streamingMessage]);
 
-  // Sync freeUsed with actual conversation messages on load
+  // Sync freeUsed: take whichever is higher — localStorage or DB user message count
   useEffect(() => {
     if (conversation) {
-      const dbUserCount = conversation.messages.filter((m: any) => m.role === "user").length;
+      const dbUserCount = (conversation.messages as any[]).filter(m => m.role === "user").length;
       const stored = getStoredCount();
       const synced = Math.max(stored, dbUserCount);
-      if (synced !== stored) {
-        setStoredCount(synced);
-        setFreeUsed(synced);
-      }
+      setStoredCount(synced);
+      setFreeUsed(synced);
     }
-  }, [conversation]);
+  }, [conversation?.id]);
 
   // Handle initial prompt from URL
   useEffect(() => {
