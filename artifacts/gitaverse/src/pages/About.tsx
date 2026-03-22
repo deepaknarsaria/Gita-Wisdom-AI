@@ -1,7 +1,8 @@
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Flower2, ArrowLeft, Flame, Heart, Compass, Shield } from "lucide-react";
+import { Flower2, Flame, Heart, Compass, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import PageLayout from "@/components/PageLayout";
 
 const PRINCIPLES = [
   { icon: Flame,   label: "Karma",      desc: "Right action without attachment to outcomes." },
@@ -14,35 +15,12 @@ export default function About() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-background overflow-hidden">
+    <PageLayout>
       {/* Ambient background */}
       <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_hsl(42_60%_98%),_hsl(42_40%_95%))] pointer-events-none" />
 
-      {/* Header */}
-      <header className="relative z-10 w-full border-b border-orange-100/60 bg-white/60 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 h-16 flex items-center justify-between">
-          <button
-            onClick={() => setLocation("/")}
-            className="text-2xl font-display font-bold tracking-tight text-foreground select-none hover:opacity-80 transition-opacity"
-          >
-            Gita<span className="text-primary">Verse</span>
-          </button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation("/")}
-            className="flex items-center gap-2 text-foreground/60 hover:text-foreground hover:bg-orange-50 rounded-full px-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
-        </div>
-      </header>
+      <div className="relative z-10 w-full max-w-2xl mx-auto px-6 sm:px-8 py-16 md:py-24">
 
-      {/* Content */}
-      <main className="relative z-10 flex-1 w-full max-w-2xl mx-auto px-6 sm:px-8 py-16 md:py-24">
-
-        {/* Icon + Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -58,7 +36,6 @@ export default function About() {
           <div className="w-12 h-0.5 bg-primary/30 rounded-full mt-2" />
         </motion.div>
 
-        {/* Body paragraphs */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -80,7 +57,6 @@ export default function About() {
           </p>
         </motion.div>
 
-        {/* Principles grid */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -107,7 +83,6 @@ export default function About() {
           </div>
         </motion.div>
 
-        {/* CTA */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -122,14 +97,7 @@ export default function About() {
           </Button>
         </motion.div>
 
-      </main>
-
-      {/* Footer */}
-      <footer className="relative z-10 w-full border-t border-orange-100/50 py-6 text-center">
-        <p className="text-xs text-muted-foreground/60 tracking-wide">
-          Inspired by Bhagavad Gita · GitaVerse
-        </p>
-      </footer>
-    </div>
+      </div>
+    </PageLayout>
   );
 }

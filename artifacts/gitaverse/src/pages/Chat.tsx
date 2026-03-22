@@ -3,10 +3,11 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { useGetOpenaiConversation } from "@workspace/api-client-react";
-import { Send, ArrowLeft, Flower2, User, Loader2, Sparkles } from "lucide-react";
+import { Send, Flower2, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
+import AppHeader from "@/components/AppHeader";
 
 const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
@@ -129,29 +130,17 @@ export default function Chat() {
       {/* Background ambient gradient */}
       <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_0%,_hsl(42_50%_99%),_hsl(42_40%_96%))] pointer-events-none" />
 
-      {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-4 md:px-6 h-16 md:h-20 bg-white/70 backdrop-blur-xl border-b border-border/40 shrink-0 shadow-sm shadow-orange-900/5">
-        <div className="flex items-center max-w-3xl mx-auto w-full">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setLocation("/")}
-            className="mr-3 rounded-full hover:bg-orange-50 hover:text-primary text-foreground transition-colors shrink-0"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex flex-col">
-            <h2 className="font-display font-semibold text-lg md:text-xl text-foreground leading-tight">GitaVerse</h2>
-            <p className="text-[11px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Timeless Wisdom</p>
+      <AppHeader />
+
+      {/* Premium badge (shown below header) */}
+      {isPremium && (
+        <div className="relative z-10 flex justify-center pt-3">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-primary/10 to-orange-400/10 border border-primary/20">
+            <Sparkles className="w-3 h-3 text-primary" />
+            <span className="text-[11px] font-semibold text-primary tracking-wide">Premium</span>
           </div>
-          {isPremium && (
-            <div className="ml-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-primary/10 to-orange-400/10 border border-primary/20">
-              <Sparkles className="w-3 h-3 text-primary" />
-              <span className="text-[11px] font-semibold text-primary tracking-wide">Premium</span>
-            </div>
-          )}
         </div>
-      </header>
+      )}
 
       {/* Chat Area */}
       <main className="relative z-10 flex-1 overflow-y-auto px-4 sm:px-6 py-8">

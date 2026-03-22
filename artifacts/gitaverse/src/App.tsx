@@ -7,6 +7,8 @@ import Home from "@/pages/Home";
 import Chat from "@/pages/Chat";
 import About from "@/pages/About";
 import DailyWisdom from "@/pages/DailyWisdom";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,6 +26,8 @@ function Router() {
       <Route path="/chat" component={Chat} />
       <Route path="/about" component={About} />
       <Route path="/daily-wisdom" component={DailyWisdom} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms" component={Terms} />
       <Route component={NotFound} />
     </Switch>
   );
