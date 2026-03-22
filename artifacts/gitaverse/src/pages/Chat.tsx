@@ -362,57 +362,68 @@ export default function Chat() {
               </p>
             </motion.div>
           ) : (
-            <form 
-              onSubmit={handleSubmit}
-              className="relative flex items-end gap-2 bg-white rounded-[2rem] border border-orange-900/10 shadow-xl shadow-orange-900/5 p-2 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300"
-            >
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-                placeholder="Seek your guidance..."
-                className="flex-1 max-h-32 min-h-[52px] bg-transparent border-none resize-none focus:outline-none py-3.5 pl-6 pr-2 text-base text-foreground placeholder:text-muted-foreground/70"
-                rows={1}
-                disabled={isStreaming}
-              />
-              
-              {/* Deep Guidance Toggle */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (!isPremium) {
-                    setIsPaywallOpen(true);
-                  } else {
-                    setDeepGuidance(prev => !prev);
-                  }
-                }}
-                title={deepGuidance && isPremium ? "Deep Guidance ON — click to turn off" : "Deep Guidance Mode (Premium)"}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide mb-1.5 shrink-0 border transition-all duration-200 ${
-                  deepGuidance && isPremium
-                    ? "bg-amber-500 border-amber-400 text-white shadow-md shadow-amber-500/30"
-                    : "bg-white border-orange-200 text-orange-400 hover:border-orange-300 hover:text-orange-500"
-                }`}
+            <>
+              <form 
+                onSubmit={handleSubmit}
+                className="relative flex items-end gap-2 bg-white rounded-[2rem] border border-orange-900/10 shadow-xl shadow-orange-900/5 p-2 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300"
               >
-                <Zap className={`w-3.5 h-3.5 ${deepGuidance && isPremium ? "fill-white" : ""}`} />
-                <span className="hidden sm:inline">
-                  {deepGuidance && isPremium ? "Deep ON" : "Deep"}
-                </span>
-              </button>
+                <textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                  placeholder="Seek your guidance..."
+                  className="flex-1 max-h-32 min-h-[52px] bg-transparent border-none resize-none focus:outline-none py-3.5 pl-6 pr-2 text-base text-foreground placeholder:text-muted-foreground/70"
+                  rows={1}
+                  disabled={isStreaming}
+                />
+                
+                <Button 
+                  type="submit" 
+                  size="icon"
+                  disabled={!input.trim() || isStreaming}
+                  className="rounded-full w-12 h-12 md:w-14 md:h-14 mb-0.5 shrink-0 bg-primary hover:bg-primary/90 text-white shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:shadow-none"
+                >
+                  <Send className="w-5 h-5 md:w-6 md:h-6 ml-0.5" />
+                </Button>
+              </form>
 
-              <Button 
-                type="submit" 
-                size="icon"
-                disabled={!input.trim() || isStreaming}
-                className="rounded-full w-12 h-12 md:w-14 md:h-14 mb-0.5 shrink-0 bg-primary hover:bg-primary/90 text-white shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:shadow-none"
-              >
-                <Send className="w-5 h-5 md:w-6 md:h-6 ml-0.5" />
-              </Button>
-            </form>
+              {/* Deep Guidance Button Row */}
+              <div className="flex items-center justify-center mt-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isPremium) {
+                      setIsPaywallOpen(true);
+                    } else {
+                      setDeepGuidance(prev => !prev);
+                    }
+                  }}
+                  className={`group relative flex items-center gap-2 rounded-2xl border px-4 py-2.5 transition-all duration-200 ${
+                    deepGuidance && isPremium
+                      ? "bg-amber-500 border-amber-400 text-white shadow-md shadow-amber-500/25 hover:bg-amber-600"
+                      : "bg-white border-orange-200/80 text-foreground/70 hover:border-orange-300 hover:bg-orange-50/60"
+                  }`}
+                >
+                  <Zap className={`w-4 h-4 shrink-0 ${deepGuidance && isPremium ? "fill-white text-white" : "text-amber-500"}`} />
+                  <span className="text-sm font-semibold">
+                    {deepGuidance && isPremium ? "Deep Guidance: ON" : "Get Deep Guidance"}
+                  </span>
+                  {!(deepGuidance && isPremium) && (
+                    <span className="ml-1 inline-flex items-center rounded-full bg-amber-100 border border-amber-300 px-2 py-0.5 text-[10px] font-bold text-amber-700 tracking-wide uppercase">
+                      Premium
+                    </span>
+                  )}
+                  {deepGuidance && isPremium && (
+                    <span className="ml-1 text-xs font-medium text-white/80">· click to turn off</span>
+                  )}
+                </button>
+              </div>
+            </>
           )}
           {!isLimitReached && (
             <p className="text-center text-[11px] md:text-xs text-muted-foreground/80 mt-4 font-medium tracking-wide">
