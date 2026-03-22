@@ -8,7 +8,6 @@ import PageLayout from "@/components/PageLayout";
 import CalmMode from "@/components/CalmMode";
 import EmailCaptureModal, { hasEmailCaptured, hasEmailDismissed } from "@/components/EmailCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
-import heroLotus from "@/assets/hero-lotus.png";
 
 const MOODS = [
   { emoji: "😔", label: "Stressed",  prompt: "I feel stressed and overwhelmed" },
@@ -124,98 +123,80 @@ export default function Home() {
       <div className="relative z-10 flex-1 flex items-center justify-center py-12 px-6 sm:px-8">
         <div className="w-full max-w-6xl flex flex-col items-center">
 
-          {/* Hero: two-column on desktop, stacked on mobile */}
-          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center mb-4">
+          {/* Hero: centered, minimal */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="w-full flex flex-col items-center text-center mb-4 pt-8 pb-2"
+          >
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-50/90 backdrop-blur-sm border border-orange-200/60 text-orange-800 text-sm font-medium mb-10 shadow-sm">
+              <Sparkles className="w-4 h-4 text-orange-500" />
+              <span className="tracking-wide">AI-Powered Vedic Wisdom</span>
+            </div>
 
-            {/* Left: text content */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="flex flex-col items-center lg:items-start text-center lg:text-left"
-            >
-              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-orange-50/90 backdrop-blur-sm border border-orange-200/60 text-orange-800 text-sm font-medium mb-8 shadow-sm">
-                <Sparkles className="w-4 h-4 text-orange-500" />
-                <span className="tracking-wide">AI-Powered Vedic Wisdom</span>
-              </div>
+            {/* Heading */}
+            <h1 className="text-6xl md:text-7xl lg:text-8xl font-display font-bold text-foreground mb-6 drop-shadow-sm tracking-tight leading-none">
+              Gita<span className="bg-gradient-to-br from-primary to-orange-400 bg-clip-text text-transparent">Verse</span>
+            </h1>
 
-              <h1 className="text-6xl md:text-7xl lg:text-8xl font-display font-bold text-foreground mb-5 drop-shadow-sm tracking-tight leading-none">
-                Gita<span className="bg-gradient-to-br from-primary to-orange-400 bg-clip-text text-transparent">Verse</span>
-              </h1>
+            {/* Sub-headline */}
+            <p className="text-xl md:text-2xl text-foreground/65 max-w-lg mb-5 font-light leading-relaxed">
+              Get clarity in life with Gita wisdom
+            </p>
 
-              <p className="text-lg md:text-xl text-foreground/70 max-w-md mb-4 font-light leading-relaxed">
-                Get clarity in life with Gita wisdom
+            {/* Trust pill */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-orange-50/70 border border-orange-200/50 mb-6">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
+              <p className="text-sm text-orange-800/80 font-medium italic tracking-wide">
+                Not just AI — guidance inspired by the Bhagavad Gita
               </p>
+            </div>
 
-              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-orange-50/70 border border-orange-200/50 mb-4">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
-                <p className="text-sm text-orange-800/80 font-medium italic tracking-wide">
-                  Not just AI — guidance inspired by the Bhagavad Gita
-                </p>
-              </div>
-              <p className="text-base text-foreground/50 max-w-md mb-10 font-light leading-relaxed">
-                Find peace, purpose, and practical guidance — inspired by timeless Bhagavad Gita teachings.
-              </p>
+            {/* Description */}
+            <p className="text-base text-foreground/45 max-w-md mb-12 font-light leading-relaxed">
+              Find peace, purpose, and practical guidance — inspired by timeless Bhagavad Gita teachings.
+            </p>
 
-              <Button
-                size="lg"
-                className="rounded-full px-10 py-7 text-lg font-medium bg-gradient-to-r from-primary to-orange-400 hover:from-primary/90 hover:to-orange-500 shadow-xl shadow-primary/20 hover:-translate-y-0.5 transition-all duration-300"
-                onClick={() => handleStartChat()}
-                disabled={isStarting}
-              >
-                {isStarting ? (
-                  <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-                ) : (
-                  <MessageSquare className="w-5 h-5 mr-3" />
-                )}
-                <span className="font-bold tracking-wide">{t.askKrishnaBtn}</span>
-                {!isStarting && <ArrowRight className="w-4 h-4 ml-3" />}
-              </Button>
-
-              {/* Social proof + trust */}
-              <div className="flex flex-col items-center lg:items-start gap-2 mt-5">
-                <p className="text-[13px] text-foreground/60 font-medium tracking-wide">
-                  {t.joinUsers}
-                </p>
-                <p className="text-[11px] text-muted-foreground/50 font-light tracking-wide">
-                  {t.notGenericAI}
-                </p>
-              </div>
-
-              {/* Calm Mode button */}
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 0.6 }}
-                onClick={() => setCalmOpen(true)}
-                className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-foreground/40 hover:text-primary hover:bg-orange-50/70 border border-transparent hover:border-orange-100 transition-all duration-300"
-              >
-                <Wind className="w-3.5 h-3.5" />
-                {t.takeAPause}
-              </motion.button>
-            </motion.div>
-
-            {/* Right: hero lotus image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-              className="relative flex items-center justify-center order-first lg:order-last"
+            {/* CTA */}
+            <Button
+              size="lg"
+              className="rounded-full px-12 py-7 text-lg font-medium bg-gradient-to-r from-primary to-orange-400 hover:from-primary/90 hover:to-orange-500 shadow-xl shadow-primary/20 hover:-translate-y-0.5 transition-all duration-300"
+              onClick={() => handleStartChat()}
+              disabled={isStarting}
             >
-              {/* Soft glow behind image */}
-              <div className="absolute inset-0 rounded-full bg-gradient-radial from-orange-200/40 via-amber-100/20 to-transparent blur-3xl scale-110" />
+              {isStarting ? (
+                <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+              ) : (
+                <MessageSquare className="w-5 h-5 mr-3" />
+              )}
+              <span className="font-bold tracking-wide">{t.askKrishnaBtn}</span>
+              {!isStarting && <ArrowRight className="w-4 h-4 ml-3" />}
+            </Button>
 
-              {/* Floating ring decoration */}
-              <div className="absolute w-[85%] h-[85%] rounded-full border border-orange-200/40 animate-[spin_30s_linear_infinite]" />
-              <div className="absolute w-[70%] h-[70%] rounded-full border border-orange-100/30 animate-[spin_20s_linear_infinite_reverse]" />
+            {/* Social proof + trust */}
+            <div className="flex flex-col items-center gap-2 mt-6">
+              <p className="text-[13px] text-foreground/55 font-medium tracking-wide">
+                {t.joinUsers}
+              </p>
+              <p className="text-[11px] text-muted-foreground/45 font-light tracking-wide">
+                {t.notGenericAI}
+              </p>
+            </div>
 
-              <img
-                src={heroLotus}
-                alt="Glowing lotus — symbol of clarity and wisdom"
-                className="relative z-10 w-full max-w-[340px] lg:max-w-[420px] drop-shadow-2xl"
-              />
-            </motion.div>
-          </div>
+            {/* Calm Mode button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              onClick={() => setCalmOpen(true)}
+              className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-foreground/35 hover:text-primary hover:bg-orange-50/70 border border-transparent hover:border-orange-100 transition-all duration-300"
+            >
+              <Wind className="w-3.5 h-3.5" />
+              {t.takeAPause}
+            </motion.button>
+          </motion.div>
 
           {/* Demo Video Section */}
           <motion.div
