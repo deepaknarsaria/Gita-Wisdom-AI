@@ -132,31 +132,64 @@ export default function Chat() {
 
       <AppHeader />
 
-      {/* Premium badge (shown below header) */}
-      {isPremium && (
-        <div className="relative z-10 flex justify-center pt-3">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-primary/10 to-orange-400/10 border border-primary/20">
-            <Sparkles className="w-3 h-3 text-primary" />
-            <span className="text-[11px] font-semibold text-primary tracking-wide">Premium</span>
+      {/* Chat identity bar */}
+      <div className="relative z-10 w-full border-b border-orange-100/50 bg-white/60 backdrop-blur-sm">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex flex-col items-center text-center gap-0.5">
+          <div className="flex items-center gap-2">
+            <Flower2 className="w-4 h-4 text-primary/70" />
+            <h2 className="font-display text-[17px] font-bold text-foreground tracking-tight">Ask Krishna</h2>
+            {isPremium && (
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-primary/10 to-orange-400/10 border border-primary/20">
+                <Sparkles className="w-2.5 h-2.5 text-primary" />
+                <span className="text-[10px] font-semibold text-primary tracking-wide">Premium</span>
+              </div>
+            )}
           </div>
+          <p className="text-[11px] text-muted-foreground/60 font-medium tracking-wide">
+            Get life guidance inspired by Bhagavad Gita
+          </p>
         </div>
-      )}
+      </div>
 
       {/* Chat Area */}
       <main className="relative z-10 flex-1 overflow-y-auto px-4 sm:px-6 py-8">
         <div className="max-w-3xl mx-auto flex flex-col gap-8 pb-8">
           
           {allMessages.length === 0 && !streamingMessage && !isStreaming && (
-            <div className="flex flex-col items-center justify-center h-full min-h-[40vh] text-center opacity-90 mt-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-orange-50 rounded-full flex items-center justify-center mb-6 text-primary shadow-inner border border-orange-100">
-                <Flower2 className="w-10 h-10" />
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="flex flex-col items-center justify-center h-full min-h-[45vh] text-center mt-6"
+            >
+              {/* Lotus icon */}
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-100 to-amber-50 rounded-full flex items-center justify-center mb-7 shadow-md shadow-orange-900/8 border border-orange-200/60">
+                <Flower2 className="w-10 h-10 text-primary" />
               </div>
-              <h3 className="font-display text-3xl font-medium text-foreground mb-4">Seek and you shall find</h3>
-              <p className="text-foreground/70 max-w-md text-lg font-light leading-relaxed">
-                "You have the right to work, but never to the fruit of work. You should never engage in action for the sake of reward, nor should you long for inaction."
+
+              {/* Title */}
+              <h3 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight">
+                Ask Krishna
+              </h3>
+              <p className="text-sm font-medium text-primary/70 tracking-widest uppercase mb-8">
+                Guidance inspired by Bhagavad Gita
               </p>
-              <p className="text-sm font-medium text-muted-foreground/80 mt-4 tracking-wide uppercase">— Bhagavad Gita 2.47</p>
-            </div>
+
+              {/* Divider with om */}
+              <div className="flex items-center gap-3 mb-8 opacity-30">
+                <div className="h-px w-12 bg-foreground/30" />
+                <span className="text-base">🕉</span>
+                <div className="h-px w-12 bg-foreground/30" />
+              </div>
+
+              {/* Verse */}
+              <p className="text-foreground/55 max-w-sm text-[15px] font-light leading-relaxed italic">
+                "You have the right to perform your actions, but never to the fruits of your actions."
+              </p>
+              <p className="text-xs font-semibold text-muted-foreground/50 mt-3 tracking-widest uppercase">
+                — Bhagavad Gita 2.47
+              </p>
+            </motion.div>
           )}
 
           <AnimatePresence initial={false}>
