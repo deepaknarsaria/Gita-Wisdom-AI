@@ -147,6 +147,9 @@ export default function Home() {
               <span className="font-bold tracking-wide">Ask Krishna Now</span>
               {!isStarting && <ArrowRight className="w-4 h-4 ml-3" />}
             </Button>
+            <p className="text-xs text-muted-foreground/50 mt-4 font-light tracking-wide text-center">
+              Ask your question and get guidance inspired by Bhagavad Gita
+            </p>
           </motion.div>
 
           {/* Mood-Based Guidance */}
