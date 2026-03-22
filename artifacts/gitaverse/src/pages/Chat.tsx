@@ -144,17 +144,17 @@ export default function Chat() {
                       Guidance inspired by Bhagavad Gita
                     </span>
                   )}
-                  <div className={`rounded-[1.5rem] px-5 py-4 md:px-6 md:py-4.5 text-[15px] md:text-[16px] leading-relaxed ${
+                  <div className={`rounded-[1.5rem] px-6 py-5 md:px-8 md:py-6 text-[16px] md:text-[17px] leading-loose ${
                     msg.role === 'user' 
                       ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-[4px] shadow-md shadow-orange-900/10' 
                       : 'bg-white border border-orange-900/5 text-foreground rounded-bl-[4px] shadow-sm shadow-orange-900/5'
                   }`}>
                     {msg.role === 'assistant' ? (
-                      <div className="prose prose-sm md:prose-base prose-orange max-w-none prose-p:leading-relaxed prose-headings:font-display">
+                      <div className="prose prose-base md:prose-lg prose-orange max-w-none prose-p:leading-loose prose-p:my-3 prose-li:my-2 prose-ul:my-4 prose-ul:space-y-2 prose-headings:font-display [&_li]:leading-relaxed">
                         <ReactMarkdown>{msg.content}</ReactMarkdown>
                       </div>
                     ) : (
-                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                      <p className="whitespace-pre-wrap leading-loose">{msg.content}</p>
                     )}
                   </div>
                 </div>
