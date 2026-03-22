@@ -102,6 +102,13 @@ export default function Home() {
             <p className="text-lg md:text-xl text-foreground/70 max-w-xl mx-auto mb-4 font-light leading-relaxed">
               Get clarity in life with Gita wisdom
             </p>
+
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-orange-50/70 border border-orange-200/50 mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 shrink-0" />
+              <p className="text-sm text-orange-800/80 font-medium italic tracking-wide">
+                Not just AI — guidance inspired by the Bhagavad Gita
+              </p>
+            </div>
             <p className="text-base text-foreground/50 max-w-lg mx-auto mb-12 font-light leading-relaxed">
               Find peace, purpose, and practical guidance — inspired by timeless Bhagavad Gita teachings.
             </p>
