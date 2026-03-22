@@ -77,6 +77,7 @@ export default function Home() {
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [calmOpen, setCalmOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
+  const [faqOpen, setFaqOpen] = useState<number | null>(null);
   const { t } = useLanguage();
 
   // Exit intent — show email capture when cursor leaves to top of page
@@ -494,6 +495,82 @@ export default function Home() {
                 );
               })()}
             </AnimatePresence>
+          </motion.div>
+
+          {/* FAQ Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+            className="mt-16 w-full max-w-2xl mx-auto pb-8"
+          >
+            {/* Header */}
+            <div className="text-center mb-8">
+              <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mb-2">Got Questions?</p>
+              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight">
+                Frequently Asked Questions
+              </h2>
+            </div>
+
+            {/* Accordion items */}
+            <div className="flex flex-col gap-3">
+              {[
+                {
+                  q: "Is this based on Bhagavad Gita?",
+                  a: "Yes, all guidance is inspired by Gita principles explained in a modern, practical way — making ancient wisdom relevant to everyday life.",
+                },
+                {
+                  q: "Is this a religious app?",
+                  a: "No. GitaVerse is a life guidance tool that draws from Gita wisdom to help with practical problems — stress, relationships, purpose, and decisions. It is for everyone.",
+                },
+                {
+                  q: "Is it free to use?",
+                  a: "You can start with free chats right away — no signup needed. Premium unlocks Deep Guidance Mode for a more in-depth, structured response.",
+                },
+                {
+                  q: "Can I trust the advice?",
+                  a: "GitaVerse is designed for self-reflection and clarity, not professional advice. Think of it as a wise friend sharing Gita-inspired perspective — the final decision is always yours.",
+                },
+              ].map(({ q, a }, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-2xl border border-orange-100 bg-white/80 backdrop-blur-sm overflow-hidden shadow-sm shadow-orange-900/4"
+                >
+                  <button
+                    onClick={() => setFaqOpen(faqOpen === idx ? null : idx)}
+                    className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left group"
+                  >
+                    <span className="text-sm font-semibold text-foreground/85 leading-snug">
+                      {q}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: faqOpen === idx ? 45 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-orange-50 group-hover:bg-primary/10 transition-colors"
+                    >
+                      <span className="text-primary text-lg leading-none font-light">+</span>
+                    </motion.div>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {faqOpen === idx && (
+                      <motion.div
+                        key="faq-answer"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-6 pb-5 text-sm text-foreground/60 leading-relaxed font-light border-t border-orange-50 pt-3">
+                          {a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
           </motion.div>
 
         </div>
