@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCreateOpenaiConversation } from "@workspace/api-client-react";
-import { Sparkles, MessageSquare, ArrowRight, Loader2, BookOpen } from "lucide-react";
+import { Sparkles, MessageSquare, ArrowRight, Loader2, BookOpen, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PageLayout from "@/components/PageLayout";
+import CalmMode from "@/components/CalmMode";
 
 const MOODS = [
   { emoji: "😔", label: "Stressed",  prompt: "I feel stressed and overwhelmed" },
@@ -71,6 +72,7 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const [isStarting, setIsStarting] = useState(false);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
+  const [calmOpen, setCalmOpen] = useState(false);
   const createConversation = useCreateOpenaiConversation();
 
   const handleStartChat = async (prompt?: string) => {
@@ -150,6 +152,18 @@ export default function Home() {
             <p className="text-xs text-muted-foreground/50 mt-4 font-light tracking-wide text-center">
               Ask your question and get guidance inspired by Bhagavad Gita
             </p>
+
+            {/* Calm Mode button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              onClick={() => setCalmOpen(true)}
+              className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-foreground/40 hover:text-primary hover:bg-orange-50/70 border border-transparent hover:border-orange-100 transition-all duration-300 mx-auto"
+            >
+              <Wind className="w-3.5 h-3.5" />
+              Take a 1-min Pause
+            </motion.button>
           </motion.div>
 
           {/* Mood-Based Guidance */}
@@ -294,6 +308,8 @@ export default function Home() {
 
         </div>
       </div>
+
+      {calmOpen && <CalmMode onClose={() => setCalmOpen(false)} />}
 
     </PageLayout>
   );
