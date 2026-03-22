@@ -64,6 +64,9 @@ function PaywallContent({ onUpgrade, onClose }: { onUpgrade: () => void; onClose
                   <p className="text-sm text-foreground/60 font-medium leading-relaxed">
                     Unlock unlimited guidance inspired by Bhagavad Gita
                   </p>
+                  <p className="text-[11px] text-muted-foreground/50 mt-2 font-light italic">
+                    Guidance inspired by Bhagavad Gita — not generic AI
+                  </p>
                 </div>
 
                 {/* Plans */}
@@ -90,9 +93,10 @@ function PaywallContent({ onUpgrade, onClose }: { onUpgrade: () => void; onClose
                     </div>
                     <ul className="flex flex-col gap-3">
                       {[
-                        { icon: Infinity, text: "Unlimited chat" },
-                        { icon: Zap,      text: "Deeper Gita insights" },
-                        { icon: Check,    text: "Priority responses" },
+                        { icon: Infinity, text: "Unlimited conversations" },
+                        { icon: Zap,      text: "Deep Guidance Mode — richer, more thorough responses" },
+                        { icon: Check,    text: "Deeper Gita insights & reflection questions" },
+                        { icon: Sparkles, text: "Priority responses, always available" },
                       ].map(({ icon: Icon, text }) => (
                         <li key={text} className="flex items-center gap-2.5">
                           <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -116,7 +120,7 @@ function PaywallContent({ onUpgrade, onClose }: { onUpgrade: () => void; onClose
                     onClick={handleUpgrade}
                     className="w-full rounded-2xl h-13 text-base font-semibold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-orange-900/15 transition-transform active:scale-[0.98]"
                   >
-                    Upgrade Now
+                    Unlock Premium Guidance
                   </Button>
                   <p className="text-center text-[11px] text-muted-foreground/50 mt-3 font-medium">
                     Cancel anytime · Secure payment

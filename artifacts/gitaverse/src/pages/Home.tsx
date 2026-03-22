@@ -149,9 +149,15 @@ export default function Home() {
               <span className="font-bold tracking-wide">Ask Krishna Now</span>
               {!isStarting && <ArrowRight className="w-4 h-4 ml-3" />}
             </Button>
-            <p className="text-xs text-muted-foreground/50 mt-4 font-light tracking-wide text-center">
-              Ask your question and get guidance inspired by Bhagavad Gita
-            </p>
+            {/* Social proof + trust */}
+            <div className="flex flex-col items-center gap-2 mt-5">
+              <p className="text-[13px] text-foreground/60 font-medium tracking-wide text-center">
+                🙏 Join 100+ users finding clarity with GitaVerse
+              </p>
+              <p className="text-[11px] text-muted-foreground/50 font-light tracking-wide text-center">
+                Guidance inspired by Bhagavad Gita — not generic AI
+              </p>
+            </div>
 
             {/* Calm Mode button */}
             <motion.button
