@@ -8,7 +8,7 @@ export function useChatStream(conversationId: number) {
   const queryClient = useQueryClient();
 
   const sendMessage = useCallback(
-    async (content: string, deepGuidance = false) => {
+    async (content: string, deepGuidance = false, language = 'EN') => {
       if (!conversationId) return;
 
       setIsStreaming(true);
@@ -18,7 +18,7 @@ export function useChatStream(conversationId: number) {
         const res = await fetch(`/api/openai/conversations/${conversationId}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content, deepGuidance }),
+          body: JSON.stringify({ content, deepGuidance, language }),
         });
 
         if (!res.ok) {

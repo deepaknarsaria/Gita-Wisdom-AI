@@ -12,6 +12,7 @@ import AppHeader from "@/components/AppHeader";
 import { useSavedGuidance } from "@/hooks/useSavedGuidance";
 import { useToast } from "@/hooks/use-toast";
 import { useSpeech } from "@/hooks/useSpeech";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
@@ -54,6 +55,7 @@ export default function Chat() {
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { language } = useLanguage();
 
   const canShowEmail = () => !hasEmailCaptured() && !hasEmailDismissed();
 
@@ -111,7 +113,7 @@ export default function Chat() {
       const next = getStoredCount() + 1;
       setStoredCount(next);
       setFreeUsed(next);
-      sendMessage(initialPrompt);
+      sendMessage(initialPrompt, false, language);
       
       // Clean up URL to avoid resending on refresh
       const url = new URL(window.location.href);
@@ -137,7 +139,7 @@ export default function Chat() {
 
     const userMessage = input;
     setInput("");
-    await sendMessage(userMessage, deepGuidance);
+    await sendMessage(userMessage, deepGuidance, language);
   };
 
   if (!conversationId) {
