@@ -7,8 +7,8 @@ const WISDOMS = [
   {
     quote: "Apne karm par focus karo, results par nahi.",
     explanation:
-      "Gita humein sikhati hai ki jab hum apne actions par focus karte hain, tab stress kam hota hai aur clarity badhti hai. Result hamesha hamare haath mein nahi hota — lekin effort hamesha hota hai.",
-    reference: "Bhagavad Gita, Chapter 2",
+      "Bhagavad Gita humein sikhati hai ki jab hum apne actions par focus karte hain, tab stress kam hota hai aur clarity badhti hai. Result hamesha hamare haath mein nahi hota — lekin effort hamesha hota hai.",
+    reference: "Bhagavad Gita, Chapter 2, Verse 47",
   },
   {
     quote: "Mann ko control karo — yahi sabse bada kaam hai.",

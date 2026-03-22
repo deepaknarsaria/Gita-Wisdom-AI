@@ -61,6 +61,7 @@ export default function Home() {
               About
             </button>
             <button
+              onClick={() => setLocation("/daily-wisdom")}
               className="px-4 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-orange-50 transition-colors"
             >
               Daily Wisdom
