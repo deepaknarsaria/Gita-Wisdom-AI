@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import Chat from "@/pages/Chat";
 import About from "@/pages/About";
+import DailyWisdom from "@/pages/DailyWisdom";
 
 const queryClient = new QueryClient({
   defaultOptions: {
