@@ -174,20 +174,42 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full border-t border-orange-100/60 bg-white/50 backdrop-blur-md">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-sm text-foreground/50 font-medium tracking-wide">
-            🕉️ Inspired by Bhagavad Gita
-          </p>
-          <div className="flex items-center gap-5">
-            <button className="text-xs text-foreground/40 hover:text-foreground/70 transition-colors">
+      <footer className="relative z-10 w-full border-t border-orange-100/80 bg-orange-50/40">
+        <div className="max-w-2xl mx-auto px-6 py-10 flex flex-col items-center gap-6 text-center">
+
+          {/* Logo mark */}
+          <span className="text-lg text-primary/40 select-none">🕉</span>
+
+          {/* Nav links */}
+          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <button
+              onClick={() => setLocation("/about")}
+              className="text-sm text-foreground/55 hover:text-primary transition-colors font-medium"
+            >
+              About
+            </button>
+            <span className="text-foreground/20 text-xs">•</span>
+            <button
+              onClick={() => setLocation("/daily-wisdom")}
+              className="text-sm text-foreground/55 hover:text-primary transition-colors font-medium"
+            >
+              Daily Wisdom
+            </button>
+            <span className="text-foreground/20 text-xs">•</span>
+            <button className="text-sm text-foreground/55 hover:text-primary transition-colors font-medium">
               Privacy Policy
             </button>
-            <div className="w-px h-3 bg-border" />
-            <button className="text-xs text-foreground/40 hover:text-foreground/70 transition-colors">
-              Terms of Service
+            <span className="text-foreground/20 text-xs">•</span>
+            <button className="text-sm text-foreground/55 hover:text-primary transition-colors font-medium">
+              Terms
             </button>
-          </div>
+          </nav>
+
+          {/* Tagline */}
+          <p className="text-xs text-foreground/35 tracking-wide">
+            Built with inspiration from the Bhagavad Gita
+          </p>
+
         </div>
       </footer>
 
