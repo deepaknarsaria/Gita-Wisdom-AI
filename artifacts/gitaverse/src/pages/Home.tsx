@@ -230,9 +230,9 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
             className="mt-12 w-full"
           >
-            <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest text-center mb-5">
-              Seek guidance by life area
-            </p>
+            <h2 className="text-base font-semibold text-foreground/70 text-center mb-5 tracking-wide">
+              Choose a topic or ask your own question
+            </h2>
 
             {/* Category tabs */}
             <div className="flex flex-wrap items-center justify-center gap-2.5 mb-5">
