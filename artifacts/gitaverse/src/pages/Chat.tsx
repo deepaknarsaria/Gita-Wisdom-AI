@@ -138,18 +138,25 @@ export default function Chat() {
                   </div>
                 )}
                 
-                <div className={`max-w-[88%] sm:max-w-[80%] rounded-[1.5rem] px-5 py-4 md:px-6 md:py-4.5 text-[15px] md:text-[16px] leading-relaxed ${
-                  msg.role === 'user' 
-                    ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-[4px] shadow-md shadow-orange-900/10' 
-                    : 'bg-white border border-orange-900/5 text-foreground rounded-bl-[4px] shadow-sm shadow-orange-900/5'
-                }`}>
-                  {msg.role === 'assistant' ? (
-                    <div className="prose prose-sm md:prose-base prose-orange max-w-none prose-p:leading-relaxed prose-headings:font-display">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    </div>
-                  ) : (
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
+                <div className="flex flex-col gap-1 max-w-[88%] sm:max-w-[80%]">
+                  {msg.role === 'assistant' && (
+                    <span className="text-[11px] font-medium text-orange-500/70 tracking-wide px-1 select-none">
+                      Guidance inspired by Bhagavad Gita
+                    </span>
                   )}
+                  <div className={`rounded-[1.5rem] px-5 py-4 md:px-6 md:py-4.5 text-[15px] md:text-[16px] leading-relaxed ${
+                    msg.role === 'user' 
+                      ? 'bg-gradient-to-br from-primary to-orange-500 text-white rounded-br-[4px] shadow-md shadow-orange-900/10' 
+                      : 'bg-white border border-orange-900/5 text-foreground rounded-bl-[4px] shadow-sm shadow-orange-900/5'
+                  }`}>
+                    {msg.role === 'assistant' ? (
+                      <div className="prose prose-sm md:prose-base prose-orange max-w-none prose-p:leading-relaxed prose-headings:font-display">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="whitespace-pre-wrap">{msg.content}</p>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
