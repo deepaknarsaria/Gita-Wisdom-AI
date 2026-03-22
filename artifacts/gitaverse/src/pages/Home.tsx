@@ -216,6 +216,71 @@ export default function Home() {
             </motion.div>
           </div>
 
+          {/* Demo Video Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+            className="mt-16 w-full max-w-3xl mx-auto"
+          >
+            {/* Section header */}
+            <div className="text-center mb-7">
+              <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mb-2">Product Demo</p>
+              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight mb-3">
+                See GitaVerse in Action
+              </h2>
+              <p className="text-sm text-foreground/50 max-w-md mx-auto font-light leading-relaxed">
+                Watch how GitaVerse helps you get clarity in life using Bhagavad Gita wisdom.
+              </p>
+            </div>
+
+            {/* Video embed container */}
+            <div className="relative w-full rounded-2xl overflow-hidden border border-orange-100 shadow-xl shadow-orange-900/8 bg-gradient-to-br from-stone-900 via-orange-950 to-stone-900">
+              {/* 16:9 aspect ratio */}
+              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+
+                {/* ── Swap this block with a real YouTube embed when ready ── */}
+                {/* To use YouTube: replace the div below with:
+                    <iframe
+                      src="https://www.youtube.com/embed/YOUR_VIDEO_ID?autoplay=0&rel=0"
+                      title="GitaVerse Demo"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="absolute inset-0 w-full h-full"
+                    />
+                */}
+
+                {/* Placeholder — remove once real video is added */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-6">
+                  {/* Subtle lotus watermark */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-[0.06] text-[160px] select-none pointer-events-none">🪷</div>
+
+                  {/* Play button */}
+                  <div className="relative z-10 w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center backdrop-blur-sm shadow-lg hover:bg-white/20 transition-colors cursor-pointer group">
+                    <div className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[18px] border-l-white/80 ml-1 group-hover:border-l-white transition-colors" />
+                  </div>
+
+                  {/* Text */}
+                  <div className="relative z-10 text-center">
+                    <p className="text-white/80 font-semibold text-base mb-1">Demo Video Coming Soon</p>
+                    <p className="text-white/40 text-sm font-light">Your video will appear here</p>
+                  </div>
+
+                  {/* Bottom pill */}
+                  <div className="relative z-10 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/8 border border-white/10 backdrop-blur-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+                    <span className="text-[11px] text-white/50 font-medium tracking-wide">gitaverse.replit.app</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Caption */}
+            <p className="text-center text-[11px] text-foreground/35 mt-3 font-light tracking-wide">
+              No signup required to try · Free to start
+            </p>
+          </motion.div>
+
           {/* Mood-Based Guidance */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
