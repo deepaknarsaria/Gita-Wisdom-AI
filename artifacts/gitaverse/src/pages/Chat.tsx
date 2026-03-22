@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { useGetOpenaiConversation } from "@workspace/api-client-react";
-import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck, Volume2, Pause, Zap } from "lucide-react";
+import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck, Volume2, Pause, Zap, Share2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
@@ -16,6 +16,17 @@ import { useSpeech } from "@/hooks/useSpeech";
 const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
 const PREMIUM_KEY = "gitaverse_premium";
+
+function formatForShare(text: string): string {
+  const clean = text
+    .replace(/\[(EMPATHY|GITA INSIGHT|GITA TEACHING|ACTION STEPS|STEP-BY-STEP GUIDANCE|GITA REFERENCE[S]?|REFLECTION QUESTION|CLOSING (?:LINE|WISDOM)|ROOT CAUSE)\]/gi, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/\*(.+?)\*/g, "$1")
+    .replace(/#{1,6}\s+/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  return `💫 *GitaVerse Wisdom*\n\n${clean}\n\n🌿 _Get your own Gita guidance at GitaVerse_`;
+}
 
 function getStoredCount(): number {
   return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
@@ -42,6 +53,7 @@ export default function Chat() {
   const [deepGuidance, setDeepGuidance] = useState(false);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const canShowEmail = () => !hasEmailCaptured() && !hasEmailDismissed();
 
@@ -309,6 +321,49 @@ export default function Chat() {
                           : <><Bookmark className="w-3.5 h-3.5" /> Save</>
                         }
                       </button>
+
+                      {/* Divider dot */}
+                      <span className="w-1 h-1 rounded-full bg-foreground/15" />
+
+                      {/* Share button */}
+                      {(() => {
+                        const msgId = String(msg.id ?? idx);
+                        const isCopied = copiedId === msgId;
+                        return (
+                          <button
+                            onClick={async () => {
+                              const shareText = formatForShare(msg.content);
+                              try {
+                                await navigator.clipboard.writeText(shareText);
+                              } catch {
+                                const el = document.createElement("textarea");
+                                el.value = shareText;
+                                document.body.appendChild(el);
+                                el.select();
+                                document.execCommand("copy");
+                                document.body.removeChild(el);
+                              }
+                              setCopiedId(msgId);
+                              toast({
+                                description: "Copied! Share this wisdom with others 🙏",
+                                duration: 3000,
+                              });
+                              setTimeout(() => setCopiedId(null), 3000);
+                            }}
+                            title="Copy & share this wisdom"
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-200
+                              ${isCopied
+                                ? "text-green-600 bg-green-50 border border-green-200"
+                                : "text-foreground/30 hover:text-primary hover:bg-orange-50 hover:border-orange-100 border border-transparent"
+                              }`}
+                          >
+                            {isCopied
+                              ? <><Check className="w-3.5 h-3.5" /> Copied!</>
+                              : <><Share2 className="w-3.5 h-3.5" /> Share</>
+                            }
+                          </button>
+                        );
+                      })()}
                     </div>
                   )}
                 </div>
