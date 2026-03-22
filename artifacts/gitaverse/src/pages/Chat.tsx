@@ -3,20 +3,23 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { useGetOpenaiConversation } from "@workspace/api-client-react";
-import { Send, ArrowLeft, Flower2, User, Loader2 } from "lucide-react";
+import { Send, ArrowLeft, Flower2, User, Loader2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
 
 const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
+const PREMIUM_KEY = "gitaverse_premium";
 
 function getStoredCount(): number {
   return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
 }
-
 function setStoredCount(n: number) {
   localStorage.setItem(STORAGE_KEY, String(n));
+}
+function getIsPremium(): boolean {
+  return localStorage.getItem(PREMIUM_KEY) === "true";
 }
 
 export default function Chat() {
@@ -30,6 +33,7 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [hasSentInitial, setHasSentInitial] = useState(false);
   const [freeUsed, setFreeUsed] = useState<number>(getStoredCount);
+  const [isPremium, setIsPremium] = useState<boolean>(getIsPremium);
 
   const { data: conversation, isLoading, isError } = useGetOpenaiConversation(conversationId, {
     query: {
@@ -76,7 +80,12 @@ export default function Chat() {
     }
   }, [initialPrompt, conversation, hasSentInitial, sendMessage]);
 
-  const isLimitReached = freeUsed >= FREE_LIMIT;
+  const isLimitReached = !isPremium && freeUsed >= FREE_LIMIT;
+
+  const handleUpgrade = () => {
+    localStorage.setItem(PREMIUM_KEY, "true");
+    setIsPremium(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,6 +144,12 @@ export default function Chat() {
             <h2 className="font-display font-semibold text-lg md:text-xl text-foreground leading-tight">GitaVerse</h2>
             <p className="text-[11px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider">Timeless Wisdom</p>
           </div>
+          {isPremium && (
+            <div className="ml-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-primary/10 to-orange-400/10 border border-primary/20">
+              <Sparkles className="w-3 h-3 text-primary" />
+              <span className="text-[11px] font-semibold text-primary tracking-wide">Premium</span>
+            </div>
+          )}
         </div>
       </header>
 
@@ -222,7 +237,7 @@ export default function Chat() {
         </div>
       </main>
 
-      <PaywallModal open={isLimitReached} />
+      <PaywallModal open={isLimitReached} onUpgrade={handleUpgrade} />
 
       {/* Input Area */}
       <footer className="relative z-10 shrink-0 bg-gradient-to-t from-background via-background/95 to-transparent pb-6 pt-10 px-4 sm:px-6">
