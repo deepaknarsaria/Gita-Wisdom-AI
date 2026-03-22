@@ -3,13 +3,14 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { useGetOpenaiConversation } from "@workspace/api-client-react";
-import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck } from "lucide-react";
+import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck, Volume2, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
 import AppHeader from "@/components/AppHeader";
 import { useSavedGuidance } from "@/hooks/useSavedGuidance";
 import { useToast } from "@/hooks/use-toast";
+import { useSpeech } from "@/hooks/useSpeech";
 
 const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
@@ -48,6 +49,7 @@ export default function Chat() {
   const { sendMessage, streamingMessage, isStreaming } = useChatStream(conversationId);
   const { saveItem, isAlreadySaved } = useSavedGuidance();
   const { toast } = useToast();
+  const { activeId: speakingId, state: speechState, toggle: toggleSpeech, stop: stopSpeech } = useSpeech();
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -230,9 +232,40 @@ export default function Chat() {
                     )}
                   </div>
 
-                  {/* Bookmark button for AI messages */}
+                  {/* Action buttons for AI messages */}
                   {msg.role === 'assistant' && (
-                    <div className="flex justify-start px-1 mt-1">
+                    <div className="flex justify-start items-center gap-2 px-1 mt-1">
+
+                      {/* Listen / Pause button */}
+                      {(() => {
+                        const msgId = String(msg.id ?? idx);
+                        const isThisSpeaking = speakingId === msgId;
+                        const isPlaying = isThisSpeaking && speechState === "playing";
+                        const isPaused = isThisSpeaking && speechState === "paused";
+                        return (
+                          <button
+                            onClick={() => toggleSpeech(msgId, msg.content)}
+                            title={isPlaying ? "Pause" : isPaused ? "Resume" : "Listen"}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-200
+                              ${isThisSpeaking
+                                ? "text-primary bg-orange-50 border border-orange-200"
+                                : "text-foreground/30 hover:text-primary hover:bg-orange-50 hover:border-orange-100 border border-transparent"
+                              }`}
+                          >
+                            {isPlaying
+                              ? <><Pause className="w-3.5 h-3.5" /> Pause</>
+                              : isPaused
+                              ? <><Volume2 className="w-3.5 h-3.5" /> Resume</>
+                              : <><Volume2 className="w-3.5 h-3.5" /> Listen</>
+                            }
+                          </button>
+                        );
+                      })()}
+
+                      {/* Divider dot */}
+                      <span className="w-1 h-1 rounded-full bg-foreground/15" />
+
+                      {/* Save button */}
                       <button
                         onClick={() => {
                           if (!isAlreadySaved(msg.content)) {
