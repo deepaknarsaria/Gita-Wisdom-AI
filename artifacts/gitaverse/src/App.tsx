@@ -9,6 +9,7 @@ import About from "@/pages/About";
 import DailyWisdom from "@/pages/DailyWisdom";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
+import SavedGuidance from "@/pages/SavedGuidance";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/daily-wisdom" component={DailyWisdom} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/terms" component={Terms} />
+      <Route path="/saved" component={SavedGuidance} />
       <Route component={NotFound} />
     </Switch>
   );

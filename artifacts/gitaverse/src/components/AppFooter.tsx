@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 const NAV_LINKS = [
   { label: "About",             path: "/about" },
   { label: "Daily Wisdom",      path: "/daily-wisdom" },
+  { label: "Saved Guidance",    path: "/saved" },
   { label: "Privacy Policy",    path: "/privacy-policy" },
   { label: "Terms & Conditions",path: "/terms" },
 ];

@@ -3,11 +3,13 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { useGetOpenaiConversation } from "@workspace/api-client-react";
-import { Send, Flower2, Loader2, Sparkles } from "lucide-react";
+import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
 import AppHeader from "@/components/AppHeader";
+import { useSavedGuidance } from "@/hooks/useSavedGuidance";
+import { useToast } from "@/hooks/use-toast";
 
 const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
@@ -44,6 +46,8 @@ export default function Chat() {
   });
 
   const { sendMessage, streamingMessage, isStreaming } = useChatStream(conversationId);
+  const { saveItem, isAlreadySaved } = useSavedGuidance();
+  const { toast } = useToast();
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -225,6 +229,34 @@ export default function Chat() {
                       <p className="whitespace-pre-wrap leading-loose">{msg.content}</p>
                     )}
                   </div>
+
+                  {/* Bookmark button for AI messages */}
+                  {msg.role === 'assistant' && (
+                    <div className="flex justify-start px-1 mt-1">
+                      <button
+                        onClick={() => {
+                          if (!isAlreadySaved(msg.content)) {
+                            saveItem(msg.content);
+                            toast({
+                              description: "✓ Saved to your guidance",
+                              duration: 2000,
+                            });
+                          }
+                        }}
+                        title={isAlreadySaved(msg.content) ? "Already saved" : "Save this guidance"}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all duration-200
+                          ${isAlreadySaved(msg.content)
+                            ? "text-primary/70 bg-orange-50 border border-orange-100 cursor-default"
+                            : "text-foreground/30 hover:text-primary hover:bg-orange-50 hover:border-orange-100 border border-transparent"
+                          }`}
+                      >
+                        {isAlreadySaved(msg.content)
+                          ? <><BookmarkCheck className="w-3.5 h-3.5" /> Saved</>
+                          : <><Bookmark className="w-3.5 h-3.5" /> Save</>
+                        }
+                      </button>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
