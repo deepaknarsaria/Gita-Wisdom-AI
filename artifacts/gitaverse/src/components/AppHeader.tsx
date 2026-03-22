@@ -4,10 +4,12 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AppHeader() {
   const [location, setLocation] = useLocation();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const { language, setLanguage } = useLanguage();
 
   const navLink = (label: string, path: string) => {
     const isActive = location === path;
@@ -50,11 +52,30 @@ export default function AppHeader() {
           </button>
 
           {/* Desktop nav */}
-          <nav className="hidden sm:flex items-center">
+          <nav className="hidden sm:flex items-center gap-1">
             {navLink("About", "/about")}
             {navLink("Daily Wisdom", "/daily-wisdom")}
 
-            <div className="w-px h-5 bg-stone-200 mx-3" />
+            <div className="w-px h-5 bg-stone-200 mx-2" />
+
+            {/* Language toggle */}
+            <div className="flex items-center bg-stone-100 rounded-full p-[3px] gap-[2px]">
+              {(["EN", "HI"] as const).map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide transition-all duration-200 ${
+                    language === lang
+                      ? "bg-white text-primary shadow-sm shadow-orange-900/10"
+                      : "text-foreground/40 hover:text-foreground/70"
+                  }`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
+
+            <div className="w-px h-5 bg-stone-200 mx-2" />
 
             <Button
               size="sm"
@@ -66,7 +87,23 @@ export default function AppHeader() {
           </nav>
 
           {/* Mobile menu */}
-          <div className="sm:hidden">
+          <div className="sm:hidden flex items-center gap-2">
+            {/* Language toggle mobile */}
+            <div className="flex items-center bg-stone-100 rounded-full p-[3px] gap-[2px]">
+              {(["EN", "HI"] as const).map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide transition-all duration-200 ${
+                    language === lang
+                      ? "bg-white text-primary shadow-sm shadow-orange-900/10"
+                      : "text-foreground/40 hover:text-foreground/70"
+                  }`}
+                >
+                  {lang}
+                </button>
+              ))}
+            </div>
             <button
               className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-2 py-1"
               onClick={() => setShowLoginModal(true)}
