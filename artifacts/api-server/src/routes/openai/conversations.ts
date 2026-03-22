@@ -10,7 +10,7 @@ import { eq, asc } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-const GITA_SYSTEM_PROMPT = `You are a calm and wise life guide inspired by Bhagavad Gita. Help users with life problems like stress, career, and overthinking. Give simple, practical advice in a modern tone.`;
+const GITA_SYSTEM_PROMPT = `You are a calm and wise life guide inspired by Bhagavad Gita. Help users with life problems like stress, career confusion, and overthinking. Give simple, practical advice in a modern tone. Do not sound religious or complex.`;
 
 router.get("/conversations", async (req, res) => {
   try {
