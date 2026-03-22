@@ -144,7 +144,7 @@ export default function Home() {
               ) : (
                 <MessageSquare className="w-5 h-5 mr-3" />
               )}
-              Start Chatting
+              <span className="font-bold tracking-wide">Ask Krishna Now</span>
               {!isStarting && <ArrowRight className="w-4 h-4 ml-3" />}
             </Button>
           </motion.div>
