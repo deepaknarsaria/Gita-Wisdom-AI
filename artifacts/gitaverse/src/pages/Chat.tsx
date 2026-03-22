@@ -6,6 +6,7 @@ import { useGetOpenaiConversation } from "@workspace/api-client-react";
 import { Send, ArrowLeft, Flower2, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
+import PaywallModal from "@/components/PaywallModal";
 
 const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
@@ -222,6 +223,8 @@ export default function Chat() {
           <div ref={messagesEndRef} className="h-2" />
         </div>
       </main>
+
+      <PaywallModal open={isLimitReached} />
 
       {/* Input Area */}
       <footer className="relative z-10 shrink-0 bg-gradient-to-t from-background via-background/95 to-transparent pb-6 pt-10 px-4 sm:px-6">
