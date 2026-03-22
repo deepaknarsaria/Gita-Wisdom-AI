@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCreateOpenaiConversation } from "@workspace/api-client-react";
 import { Sparkles, MessageSquare, ArrowRight, Loader2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,16 +14,63 @@ const MOODS = [
   { emoji: "😌", label: "Peaceful",  prompt: "How to maintain inner peace" },
 ];
 
-const SUGGESTED_PROMPTS = [
-  "I feel lost in my career",
-  "How to handle stress and anxiety?",
-  "How to stop overthinking?",
-  "What is the true purpose of life?"
+const LIFE_AREAS = [
+  {
+    emoji: "💼",
+    label: "Career",
+    questions: [
+      "I feel lost in my career",
+      "How to choose the right path in life",
+      "How to stay motivated at work",
+      "Should I quit my job and follow my passion?",
+    ],
+  },
+  {
+    emoji: "❤️",
+    label: "Relationships",
+    questions: [
+      "How to deal with a difficult relationship",
+      "How to forgive someone who hurt me",
+      "How to let go of someone I love",
+      "How to build stronger bonds with family",
+    ],
+  },
+  {
+    emoji: "🧠",
+    label: "Mind",
+    questions: [
+      "How to stop overthinking",
+      "How to control anxiety and fear",
+      "My mind is never at peace — what to do?",
+      "How to build self-confidence",
+    ],
+  },
+  {
+    emoji: "🧘",
+    label: "Peace",
+    questions: [
+      "How to find inner peace",
+      "How to maintain calm in difficult situations",
+      "How to detach from outcomes",
+      "What is the meaning of true happiness?",
+    ],
+  },
+  {
+    emoji: "💰",
+    label: "Money",
+    questions: [
+      "How to overcome financial stress",
+      "What does Gita say about wealth and greed?",
+      "How to stop worrying about money",
+      "How to build a balanced approach to success",
+    ],
+  },
 ];
 
 export default function Home() {
   const [, setLocation] = useLocation();
   const [isStarting, setIsStarting] = useState(false);
+  const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const createConversation = useCreateOpenaiConversation();
 
   const handleStartChat = async (prompt?: string) => {
@@ -173,38 +220,73 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Suggested Prompts */}
+          {/* Life Areas */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-            className="mt-14 w-full"
+            className="mt-12 w-full"
           >
-            <div className="flex items-center justify-center gap-4 mb-7 opacity-60">
-              <div className="h-px bg-border flex-1 max-w-[50px]" />
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
-                Or seek guidance on
-              </p>
-              <div className="h-px bg-border flex-1 max-w-[50px]" />
+            <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest text-center mb-5">
+              Seek guidance by life area
+            </p>
+
+            {/* Category tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-2.5 mb-5">
+              {LIFE_AREAS.map(({ emoji, label }) => {
+                const isActive = selectedArea === label;
+                return (
+                  <motion.button
+                    key={label}
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => setSelectedArea(isActive ? null : label)}
+                    disabled={isStarting}
+                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-semibold transition-all duration-200 disabled:opacity-50
+                      ${isActive
+                        ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
+                        : "bg-white/80 text-foreground/70 border-orange-100 hover:border-orange-300 hover:bg-white hover:shadow-sm backdrop-blur-sm"
+                      }`}
+                  >
+                    <span className="text-base leading-none">{emoji}</span>
+                    <span>{label}</span>
+                  </motion.button>
+                );
+              })}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {SUGGESTED_PROMPTS.map((prompt, index) => (
-                <motion.button
-                  key={index}
-                  whileHover={{ scale: 1.015, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleStartChat(prompt)}
-                  disabled={isStarting}
-                  className="glass-card text-left px-5 py-4 rounded-2xl flex items-center justify-between group hover:bg-white/95 hover:shadow-md hover:border-orange-200 transition-all duration-300 disabled:opacity-50"
-                >
-                  <span className="text-foreground/80 font-medium pr-3 leading-snug text-sm">{prompt}</span>
-                  <div className="w-9 h-9 rounded-full bg-orange-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm shrink-0">
-                    <ArrowRight className="w-4 h-4" />
-                  </div>
-                </motion.button>
-              ))}
-            </div>
+            {/* Questions panel */}
+            <AnimatePresence mode="wait">
+              {selectedArea && (() => {
+                const area = LIFE_AREAS.find(a => a.label === selectedArea)!;
+                return (
+                  <motion.div
+                    key={selectedArea}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.25 }}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                  >
+                    {area.questions.map((q, i) => (
+                      <motion.button
+                        key={i}
+                        whileHover={{ scale: 1.015, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => handleStartChat(q)}
+                        disabled={isStarting}
+                        className="glass-card text-left px-5 py-4 rounded-2xl flex items-center justify-between group hover:bg-white/95 hover:shadow-md hover:border-orange-200 transition-all duration-300 disabled:opacity-50"
+                      >
+                        <span className="text-foreground/80 font-medium pr-3 leading-snug text-sm">{q}</span>
+                        <div className="w-9 h-9 rounded-full bg-orange-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors shadow-sm shrink-0">
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </motion.button>
+                    ))}
+                  </motion.div>
+                );
+              })()}
+            </AnimatePresence>
           </motion.div>
 
         </div>
