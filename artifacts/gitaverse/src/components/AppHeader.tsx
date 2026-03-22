@@ -6,51 +6,79 @@ import { X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AppHeader() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const navLink = (label: string, path: string) => {
+    const isActive = location === path;
+    return (
+      <button
+        onClick={() => setLocation(path)}
+        className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+          isActive
+            ? "text-primary"
+            : "text-foreground/60 hover:text-foreground"
+        }`}
+      >
+        {label}
+        {isActive && (
+          <motion.span
+            layoutId="nav-underline"
+            className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full bg-primary"
+          />
+        )}
+      </button>
+    );
+  };
 
   return (
     <>
-      <header className="w-full border-b border-orange-100/60 bg-white/80 backdrop-blur-md shrink-0 z-10">
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-stone-100 shadow-[0_1px_12px_rgba(0,0,0,0.06)] shrink-0">
+        <div className="max-w-6xl mx-auto px-6 sm:px-10 h-[62px] flex items-center justify-between gap-8">
+
+          {/* Logo */}
           <button
             onClick={() => setLocation("/")}
-            className="text-2xl font-display font-bold tracking-tight text-foreground select-none hover:opacity-80 transition-opacity"
+            className="flex items-center gap-0 select-none group"
           >
-            Gita<span className="text-primary">Verse</span>
+            <span className="text-[22px] font-display font-extrabold tracking-tight text-foreground group-hover:opacity-85 transition-opacity">
+              Gita
+            </span>
+            <span className="text-[22px] font-display font-extrabold tracking-tight text-primary group-hover:opacity-85 transition-opacity">
+              Verse
+            </span>
           </button>
 
-          <nav className="hidden sm:flex items-center gap-1">
-            <button
-              onClick={() => setLocation("/about")}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-orange-50 transition-colors"
-            >
-              About
-            </button>
-            <button
-              onClick={() => setLocation("/daily-wisdom")}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-orange-50 transition-colors"
-            >
-              Daily Wisdom
-            </button>
+          {/* Desktop nav */}
+          <nav className="hidden sm:flex items-center">
+            {navLink("About", "/about")}
+            {navLink("Daily Wisdom", "/daily-wisdom")}
+
+            <div className="w-px h-5 bg-stone-200 mx-3" />
+
             <Button
               size="sm"
-              variant="outline"
               onClick={() => setShowLoginModal(true)}
-              className="ml-2 rounded-full border-orange-200 text-foreground/80 hover:bg-orange-50 hover:border-orange-300"
+              className="rounded-full h-9 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold shadow-sm shadow-orange-900/15 transition-transform active:scale-[0.97]"
             >
               Login
             </Button>
           </nav>
 
+          {/* Mobile menu */}
           <div className="sm:hidden">
-            <Button size="sm" variant="ghost" className="text-foreground/60 text-sm">
-              Menu
-            </Button>
+            <button
+              className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-2 py-1"
+              onClick={() => setShowLoginModal(true)}
+            >
+              Login
+            </button>
           </div>
+
         </div>
       </header>
 
+      {/* Login Modal */}
       {createPortal(
         <AnimatePresence>
           {showLoginModal && (
