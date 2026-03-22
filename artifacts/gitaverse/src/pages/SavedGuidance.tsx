@@ -4,6 +4,7 @@ import { Bookmark, Trash2, Flower2, BookOpen } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useSavedGuidance } from "@/hooks/useSavedGuidance";
 import ReactMarkdown from "react-markdown";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 function formatDate(ts: number) {
   return new Date(ts).toLocaleDateString("en-IN", {
@@ -18,6 +19,7 @@ function formatDate(ts: number) {
 export default function SavedGuidance() {
   const { items, removeItem } = useSavedGuidance();
   const [removingId, setRemovingId] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   const handleRemove = (id: string) => {
     setRemovingId(id);
@@ -34,13 +36,13 @@ export default function SavedGuidance() {
         <div className="max-w-3xl mx-auto px-6 sm:px-8 py-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 mb-5">
             <Bookmark className="w-3.5 h-3.5 text-primary/70" />
-            <span className="text-[11px] font-bold text-primary/70 uppercase tracking-widest">Saved Guidance</span>
+            <span className="text-[11px] font-bold text-primary/70 uppercase tracking-widest">{t.savedGuidance}</span>
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-3">
-            Your Saved Wisdom
+            {t.yourSavedWisdom}
           </h1>
           <p className="text-base text-foreground/50 font-light max-w-md mx-auto">
-            Revisit the guidance that resonated with you, whenever you need it.
+            {t.savedWisdomSubtitle}
           </p>
         </div>
       </div>

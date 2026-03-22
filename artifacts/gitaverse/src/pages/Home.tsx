@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import PageLayout from "@/components/PageLayout";
 import CalmMode from "@/components/CalmMode";
 import EmailCaptureModal, { hasEmailCaptured, hasEmailDismissed } from "@/components/EmailCaptureModal";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const MOODS = [
   { emoji: "😔", label: "Stressed",  prompt: "I feel stressed and overwhelmed" },
@@ -75,6 +76,7 @@ export default function Home() {
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [calmOpen, setCalmOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
+  const { t } = useLanguage();
 
   // Exit intent — show email capture when cursor leaves to top of page
   useEffect(() => {
@@ -160,16 +162,16 @@ export default function Home() {
               ) : (
                 <MessageSquare className="w-5 h-5 mr-3" />
               )}
-              <span className="font-bold tracking-wide">Ask Krishna Now</span>
+              <span className="font-bold tracking-wide">{t.askKrishnaBtn}</span>
               {!isStarting && <ArrowRight className="w-4 h-4 ml-3" />}
             </Button>
             {/* Social proof + trust */}
             <div className="flex flex-col items-center gap-2 mt-5">
               <p className="text-[13px] text-foreground/60 font-medium tracking-wide text-center">
-                🙏 Join 100+ users finding clarity with GitaVerse
+                {t.joinUsers}
               </p>
               <p className="text-[11px] text-muted-foreground/50 font-light tracking-wide text-center">
-                Guidance inspired by Bhagavad Gita — not generic AI
+                {t.notGenericAI}
               </p>
             </div>
 
@@ -182,7 +184,7 @@ export default function Home() {
               className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-foreground/40 hover:text-primary hover:bg-orange-50/70 border border-transparent hover:border-orange-100 transition-all duration-300 mx-auto"
             >
               <Wind className="w-3.5 h-3.5" />
-              Take a 1-min Pause
+              {t.takeAPause}
             </motion.button>
           </motion.div>
 
@@ -194,7 +196,7 @@ export default function Home() {
             className="mt-14 w-full"
           >
             <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest text-center mb-5">
-              How are you feeling today?
+              {t.howFeeling}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               {MOODS.map(({ emoji, label, prompt }) => (
@@ -228,7 +230,7 @@ export default function Home() {
               <div className="flex items-center justify-center gap-2 mb-5">
                 <BookOpen className="w-3.5 h-3.5 text-primary/60" />
                 <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">
-                  Today's Gita Wisdom
+                  {t.todaysGitaWisdom}
                 </p>
               </div>
 
@@ -265,7 +267,7 @@ export default function Home() {
             className="mt-12 w-full"
           >
             <h2 className="text-base font-semibold text-foreground/70 text-center mb-5 tracking-wide">
-              Choose a topic or ask your own question
+              {t.chooseTopic}
             </h2>
 
             {/* Category tabs */}
