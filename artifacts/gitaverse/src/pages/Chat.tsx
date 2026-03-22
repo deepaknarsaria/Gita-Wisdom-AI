@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { useGetOpenaiConversation } from "@workspace/api-client-react";
-import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck, Volume2, Pause } from "lucide-react";
+import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck, Volume2, Pause, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
@@ -38,6 +38,8 @@ export default function Chat() {
   const [hasSentInitial, setHasSentInitial] = useState(false);
   const [freeUsed, setFreeUsed] = useState<number>(getStoredCount);
   const [isPremium, setIsPremium] = useState<boolean>(getIsPremium);
+  const [deepGuidance, setDeepGuidance] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
 
   const { data: conversation, isLoading, isError } = useGetOpenaiConversation(conversationId, {
     query: {
@@ -104,7 +106,7 @@ export default function Chat() {
 
     const userMessage = input;
     setInput("");
-    await sendMessage(userMessage);
+    await sendMessage(userMessage, deepGuidance);
   };
 
   if (!conversationId) {
@@ -324,10 +326,28 @@ export default function Chat() {
         </div>
       </main>
 
-      <PaywallModal open={isLimitReached} onUpgrade={handleUpgrade} />
+      <PaywallModal open={isLimitReached || isPaywallOpen} onUpgrade={() => { handleUpgrade(); setIsPaywallOpen(false); }} onClose={() => setIsPaywallOpen(false)} />
 
       {/* Input Area */}
       <footer className="relative z-10 shrink-0 bg-gradient-to-t from-background via-background/95 to-transparent pb-6 pt-10 px-4 sm:px-6">
+        {/* Deep Guidance Active Banner */}
+        <AnimatePresence>
+          {deepGuidance && isPremium && (
+            <motion.div
+              initial={{ opacity: 0, y: 6, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: 6, height: 0 }}
+              className="max-w-3xl mx-auto mb-3 overflow-hidden"
+            >
+              <div className="flex items-center justify-center gap-2 bg-amber-500/10 border border-amber-400/30 rounded-2xl px-4 py-2">
+                <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500 shrink-0" />
+                <p className="text-xs font-semibold text-amber-700 tracking-wide">
+                  Deep Guidance Mode active — responses will be longer and more thorough
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div className="max-w-3xl mx-auto">
           {isLimitReached ? (
             <motion.div
@@ -361,6 +381,29 @@ export default function Chat() {
                 disabled={isStreaming}
               />
               
+              {/* Deep Guidance Toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isPremium) {
+                    setIsPaywallOpen(true);
+                  } else {
+                    setDeepGuidance(prev => !prev);
+                  }
+                }}
+                title={deepGuidance && isPremium ? "Deep Guidance ON — click to turn off" : "Deep Guidance Mode (Premium)"}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide mb-1.5 shrink-0 border transition-all duration-200 ${
+                  deepGuidance && isPremium
+                    ? "bg-amber-500 border-amber-400 text-white shadow-md shadow-amber-500/30"
+                    : "bg-white border-orange-200 text-orange-400 hover:border-orange-300 hover:text-orange-500"
+                }`}
+              >
+                <Zap className={`w-3.5 h-3.5 ${deepGuidance && isPremium ? "fill-white" : ""}`} />
+                <span className="hidden sm:inline">
+                  {deepGuidance && isPremium ? "Deep ON" : "Deep"}
+                </span>
+              </button>
+
               <Button 
                 type="submit" 
                 size="icon"

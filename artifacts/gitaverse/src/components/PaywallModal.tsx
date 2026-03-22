@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 interface PaywallModalProps {
   open: boolean;
   onUpgrade: () => void;
+  onClose?: () => void;
 }
 
 type Step = "plans" | "loading" | "success";
 
-function PaywallContent({ onUpgrade }: { onUpgrade: () => void }) {
+function PaywallContent({ onUpgrade, onClose }: { onUpgrade: () => void; onClose?: () => void }) {
   const [step, setStep] = useState<Step>("plans");
 
   const handleUpgrade = () => {
@@ -32,7 +33,8 @@ function PaywallContent({ onUpgrade }: { onUpgrade: () => void }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{ position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(5px)" }}
+        onClick={step === "plans" ? onClose : undefined}
+        style={{ position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(5px)", cursor: step === "plans" && onClose ? "pointer" : "default" }}
       />
 
       {/* Modal container */}
@@ -175,9 +177,9 @@ function PaywallContent({ onUpgrade }: { onUpgrade: () => void }) {
   );
 }
 
-export default function PaywallModal({ open, onUpgrade }: PaywallModalProps) {
+export default function PaywallModal({ open, onUpgrade, onClose }: PaywallModalProps) {
   return createPortal(
-    <AnimatePresence>{open && <PaywallContent onUpgrade={onUpgrade} />}</AnimatePresence>,
+    <AnimatePresence>{open && <PaywallContent onUpgrade={onUpgrade} onClose={onClose} />}</AnimatePresence>,
     document.body
   );
 }
