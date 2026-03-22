@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { useCreateOpenaiConversation } from "@workspace/api-client-react";
-import { Sparkles, MessageSquare, ArrowRight, Loader2 } from "lucide-react";
+import { Sparkles, MessageSquare, ArrowRight, Loader2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PageLayout from "@/components/PageLayout";
 
@@ -129,11 +129,55 @@ export default function Home() {
             </div>
           </motion.div>
 
+          {/* Daily Shloka */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.35, ease: "easeOut" }}
+            className="mt-12 w-full"
+          >
+            <div className="relative rounded-3xl overflow-hidden border border-orange-100 bg-gradient-to-br from-orange-50/90 via-amber-50/60 to-stone-50/80 shadow-md shadow-orange-900/5 px-7 py-8 text-center">
+              {/* Subtle lotus watermark */}
+              <div className="absolute right-4 top-4 text-orange-200 text-5xl leading-none select-none pointer-events-none opacity-50">🕉</div>
+
+              {/* Header */}
+              <div className="flex items-center justify-center gap-2 mb-5">
+                <BookOpen className="w-3.5 h-3.5 text-primary/60" />
+                <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest">
+                  Today's Gita Wisdom
+                </p>
+              </div>
+
+              {/* Shloka line */}
+              <p className="text-2xl md:text-3xl font-bold text-foreground leading-snug mb-5 tracking-tight font-serif italic">
+                "Apne karm par focus karo,<br className="hidden sm:block" /> results par nahi."
+              </p>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 justify-center mb-5 opacity-25">
+                <div className="h-px w-10 bg-foreground" />
+                <div className="w-1 h-1 rounded-full bg-foreground" />
+                <div className="h-px w-10 bg-foreground" />
+              </div>
+
+              {/* Explanation */}
+              <p className="text-sm text-foreground/60 max-w-md mx-auto leading-relaxed mb-5 font-light">
+                Bhagavad Gita sikhati hai ki jab hum apne actions par focus karte hain, tab stress kam hota hai.
+              </p>
+
+              {/* Reference */}
+              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/70 border border-orange-100 text-[11px] font-semibold text-primary/70 tracking-wide shadow-sm">
+                <span className="w-1 h-1 rounded-full bg-primary/50 inline-block" />
+                Bhagavad Gita · Chapter 2, Verse 47
+              </span>
+            </div>
+          </motion.div>
+
           {/* Suggested Prompts */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
             className="mt-14 w-full"
           >
             <div className="flex items-center justify-center gap-4 mb-7 opacity-60">
