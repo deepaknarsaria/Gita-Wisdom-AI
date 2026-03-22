@@ -6,6 +6,14 @@ import { Sparkles, MessageSquare, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PageLayout from "@/components/PageLayout";
 
+const MOODS = [
+  { emoji: "😔", label: "Stressed",  prompt: "I feel stressed and overwhelmed" },
+  { emoji: "😕", label: "Confused",  prompt: "I feel confused about my life decisions" },
+  { emoji: "😡", label: "Angry",     prompt: "How to control anger" },
+  { emoji: "😞", label: "Sad",       prompt: "I feel low and unmotivated" },
+  { emoji: "😌", label: "Peaceful",  prompt: "How to maintain inner peace" },
+];
+
 const SUGGESTED_PROMPTS = [
   "I feel lost in my career",
   "How to handle stress and anxiety?",
@@ -94,12 +102,39 @@ export default function Home() {
             </Button>
           </motion.div>
 
+          {/* Mood-Based Guidance */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+            className="mt-14 w-full"
+          >
+            <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-widest text-center mb-5">
+              How are you feeling today?
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              {MOODS.map(({ emoji, label, prompt }) => (
+                <motion.button
+                  key={label}
+                  whileHover={{ scale: 1.06, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleStartChat(prompt)}
+                  disabled={isStarting}
+                  className="flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/80 border border-orange-100 shadow-sm hover:bg-white hover:border-orange-300 hover:shadow-md transition-all duration-200 disabled:opacity-50 backdrop-blur-sm"
+                >
+                  <span className="text-xl leading-none">{emoji}</span>
+                  <span className="text-sm font-semibold text-foreground/75">{label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
           {/* Suggested Prompts */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-            className="mt-20 w-full"
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="mt-14 w-full"
           >
             <div className="flex items-center justify-center gap-4 mb-7 opacity-60">
               <div className="h-px bg-border flex-1 max-w-[50px]" />
