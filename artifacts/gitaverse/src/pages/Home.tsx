@@ -54,14 +54,17 @@ export default function Home() {
 
           {/* Nav */}
           <nav className="hidden sm:flex items-center gap-1">
-            {["About", "Daily Wisdom"].map((label) => (
-              <button
-                key={label}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-orange-50 transition-colors"
-              >
-                {label}
-              </button>
-            ))}
+            <button
+              onClick={() => setLocation("/about")}
+              className="px-4 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-orange-50 transition-colors"
+            >
+              About
+            </button>
+            <button
+              className="px-4 py-2 rounded-lg text-sm font-medium text-foreground/70 hover:text-foreground hover:bg-orange-50 transition-colors"
+            >
+              Daily Wisdom
+            </button>
             <Button
               size="sm"
               variant="outline"
