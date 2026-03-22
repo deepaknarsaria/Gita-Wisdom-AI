@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCreateOpenaiConversation } from "@workspace/api-client-react";
@@ -6,6 +6,7 @@ import { Sparkles, MessageSquare, ArrowRight, Loader2, BookOpen, Wind } from "lu
 import { Button } from "@/components/ui/button";
 import PageLayout from "@/components/PageLayout";
 import CalmMode from "@/components/CalmMode";
+import EmailCaptureModal, { hasEmailCaptured, hasEmailDismissed } from "@/components/EmailCaptureModal";
 
 const MOODS = [
   { emoji: "😔", label: "Stressed",  prompt: "I feel stressed and overwhelmed" },
@@ -73,6 +74,19 @@ export default function Home() {
   const [isStarting, setIsStarting] = useState(false);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [calmOpen, setCalmOpen] = useState(false);
+  const [isEmailOpen, setIsEmailOpen] = useState(false);
+
+  // Exit intent — show email capture when cursor leaves to top of page
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0 && !hasEmailCaptured() && !hasEmailDismissed()) {
+        setIsEmailOpen(true);
+      }
+    };
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => document.removeEventListener("mouseleave", handleMouseLeave);
+  }, []);
+
   const createConversation = useCreateOpenaiConversation();
 
   const handleStartChat = async (prompt?: string) => {
@@ -316,6 +330,7 @@ export default function Home() {
       </div>
 
       {calmOpen && <CalmMode onClose={() => setCalmOpen(false)} />}
+      <EmailCaptureModal open={isEmailOpen} onClose={() => setIsEmailOpen(false)} />
 
     </PageLayout>
   );

@@ -7,6 +7,7 @@ import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck, Volume2, Pau
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
+import EmailCaptureModal, { hasEmailCaptured, hasEmailDismissed } from "@/components/EmailCaptureModal";
 import AppHeader from "@/components/AppHeader";
 import { useSavedGuidance } from "@/hooks/useSavedGuidance";
 import { useToast } from "@/hooks/use-toast";
@@ -40,6 +41,13 @@ export default function Chat() {
   const [isPremium, setIsPremium] = useState<boolean>(getIsPremium);
   const [deepGuidance, setDeepGuidance] = useState(false);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+  const [isEmailOpen, setIsEmailOpen] = useState(false);
+
+  const canShowEmail = () => !hasEmailCaptured() && !hasEmailDismissed();
+
+  const openEmailIfEligible = () => {
+    if (canShowEmail()) setIsEmailOpen(true);
+  };
 
   const { data: conversation, isLoading, isError } = useGetOpenaiConversation(conversationId, {
     query: {
@@ -52,6 +60,17 @@ export default function Chat() {
   const { saveItem, isAlreadySaved } = useSavedGuidance();
   const { toast } = useToast();
   const { activeId: speakingId, state: speechState, toggle: toggleSpeech, stop: stopSpeech } = useSpeech();
+
+  // Exit intent — show email capture when cursor leaves to top of page
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0 && canShowEmail()) {
+        setIsEmailOpen(true);
+      }
+    };
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => document.removeEventListener("mouseleave", handleMouseLeave);
+  }, []);
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -326,7 +345,12 @@ export default function Chat() {
         </div>
       </main>
 
-      <PaywallModal open={isLimitReached || isPaywallOpen} onUpgrade={() => { handleUpgrade(); setIsPaywallOpen(false); }} onClose={() => setIsPaywallOpen(false)} />
+      <PaywallModal
+        open={isLimitReached || isPaywallOpen}
+        onUpgrade={() => { handleUpgrade(); setIsPaywallOpen(false); }}
+        onClose={() => { setIsPaywallOpen(false); openEmailIfEligible(); }}
+      />
+      <EmailCaptureModal open={isEmailOpen} onClose={() => setIsEmailOpen(false)} />
 
       {/* Input Area */}
       <footer className="relative z-10 shrink-0 bg-gradient-to-t from-background via-background/95 to-transparent pb-6 pt-10 px-4 sm:px-6">
