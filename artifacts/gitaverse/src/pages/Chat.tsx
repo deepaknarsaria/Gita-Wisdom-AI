@@ -7,6 +7,17 @@ import { Send, ArrowLeft, Flower2, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 
+const FREE_LIMIT = 5;
+const STORAGE_KEY = "gitaverse_free_used";
+
+function getStoredCount(): number {
+  return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+}
+
+function setStoredCount(n: number) {
+  localStorage.setItem(STORAGE_KEY, String(n));
+}
+
 export default function Chat() {
   const [location, setLocation] = useLocation();
   const searchParams = new URLSearchParams(window.location.search);
@@ -17,6 +28,7 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [hasSentInitial, setHasSentInitial] = useState(false);
+  const [freeUsed, setFreeUsed] = useState<number>(getStoredCount);
 
   const { data: conversation, isLoading, isError } = useGetOpenaiConversation(conversationId, {
     query: {
@@ -36,10 +48,26 @@ export default function Chat() {
     scrollToBottom();
   }, [conversation?.messages, streamingMessage]);
 
+  // Sync freeUsed with actual conversation messages on load
+  useEffect(() => {
+    if (conversation) {
+      const dbUserCount = conversation.messages.filter((m: any) => m.role === "user").length;
+      const stored = getStoredCount();
+      const synced = Math.max(stored, dbUserCount);
+      if (synced !== stored) {
+        setStoredCount(synced);
+        setFreeUsed(synced);
+      }
+    }
+  }, [conversation]);
+
   // Handle initial prompt from URL
   useEffect(() => {
     if (initialPrompt && conversation && !hasSentInitial && conversation.messages.length === 0) {
       setHasSentInitial(true);
+      const next = getStoredCount() + 1;
+      setStoredCount(next);
+      setFreeUsed(next);
       sendMessage(initialPrompt);
       
       // Clean up URL to avoid resending on refresh
@@ -49,14 +77,18 @@ export default function Chat() {
     }
   }, [initialPrompt, conversation, hasSentInitial, sendMessage]);
 
+  const isLimitReached = freeUsed >= FREE_LIMIT;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isStreaming) return;
+    if (!input.trim() || isStreaming || isLimitReached) return;
     
+    const next = freeUsed + 1;
+    setFreeUsed(next);
+    setStoredCount(next);
+
     const userMessage = input;
     setInput("");
-    
-    // We visually clear the input instantly, the streaming hook handles the rest
     await sendMessage(userMessage);
   };
 
@@ -194,37 +226,58 @@ export default function Chat() {
       {/* Input Area */}
       <footer className="relative z-10 shrink-0 bg-gradient-to-t from-background via-background/95 to-transparent pb-6 pt-10 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto">
-          <form 
-            onSubmit={handleSubmit}
-            className="relative flex items-end gap-2 bg-white rounded-[2rem] border border-orange-900/10 shadow-xl shadow-orange-900/5 p-2 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300"
-          >
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e);
-                }
-              }}
-              placeholder="Seek your guidance..."
-              className="flex-1 max-h-32 min-h-[52px] bg-transparent border-none resize-none focus:outline-none py-3.5 pl-6 pr-2 text-base text-foreground placeholder:text-muted-foreground/70"
-              rows={1}
-              disabled={isStreaming}
-            />
-            
-            <Button 
-              type="submit" 
-              size="icon"
-              disabled={!input.trim() || isStreaming}
-              className="rounded-full w-12 h-12 md:w-14 md:h-14 mb-0.5 shrink-0 bg-primary hover:bg-primary/90 text-white shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:shadow-none"
+          {isLimitReached ? (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center gap-3 rounded-[2rem] border border-orange-200 bg-orange-50/80 backdrop-blur px-6 py-5 text-center shadow-lg shadow-orange-900/5"
             >
-              <Send className="w-5 h-5 md:w-6 md:h-6 ml-0.5" />
-            </Button>
-          </form>
-          <p className="text-center text-[11px] md:text-xs text-muted-foreground/80 mt-4 font-medium tracking-wide">
-            AI can make mistakes. Reflect deeply on the guidance received.
-          </p>
+              <Flower2 className="w-6 h-6 text-primary opacity-70" />
+              <p className="text-[15px] font-medium text-foreground/80 leading-snug">
+                You've reached your free limit.{" "}
+                <span className="text-primary font-semibold">Upgrade to continue your journey.</span>
+              </p>
+            </motion.div>
+          ) : (
+            <form 
+              onSubmit={handleSubmit}
+              className="relative flex items-end gap-2 bg-white rounded-[2rem] border border-orange-900/10 shadow-xl shadow-orange-900/5 p-2 focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300"
+            >
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+                placeholder="Seek your guidance..."
+                className="flex-1 max-h-32 min-h-[52px] bg-transparent border-none resize-none focus:outline-none py-3.5 pl-6 pr-2 text-base text-foreground placeholder:text-muted-foreground/70"
+                rows={1}
+                disabled={isStreaming}
+              />
+              
+              <Button 
+                type="submit" 
+                size="icon"
+                disabled={!input.trim() || isStreaming}
+                className="rounded-full w-12 h-12 md:w-14 md:h-14 mb-0.5 shrink-0 bg-primary hover:bg-primary/90 text-white shadow-md transition-transform active:scale-95 disabled:opacity-50 disabled:shadow-none"
+              >
+                <Send className="w-5 h-5 md:w-6 md:h-6 ml-0.5" />
+              </Button>
+            </form>
+          )}
+          {!isLimitReached && (
+            <p className="text-center text-[11px] md:text-xs text-muted-foreground/80 mt-4 font-medium tracking-wide">
+              AI can make mistakes. Reflect deeply on the guidance received.
+            </p>
+          )}
+          {!isLimitReached && (
+            <p className="text-center text-[11px] text-muted-foreground/50 mt-1 tracking-wide">
+              {FREE_LIMIT - freeUsed} free {FREE_LIMIT - freeUsed === 1 ? "message" : "messages"} remaining
+            </p>
+          )}
         </div>
       </footer>
     </div>
