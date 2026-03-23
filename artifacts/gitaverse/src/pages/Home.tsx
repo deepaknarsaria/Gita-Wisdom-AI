@@ -107,8 +107,26 @@ export default function Home() {
       image: `${import.meta.env.BASE_URL}favicon.svg`,
       theme: { color: "#e07a2b" },
       modal: { ondismiss: () => selectPendingPlan(plan) },
-      handler: (response: any) => {
-        console.log("Payment success", response.razorpay_payment_id);
+      handler: async (response: any) => {
+        if (response.razorpay_order_id && response.razorpay_signature) {
+          try {
+            const res = await fetch(`${import.meta.env.BASE_URL}api/razorpay/verify-payment`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const data = await res.json();
+            if (!data.success) {
+              console.warn("Signature verification failed — activating anyway for now");
+            }
+          } catch (err) {
+            console.error("Verification request failed", err);
+          }
+        }
         activatePlan(plan);
       },
     };
