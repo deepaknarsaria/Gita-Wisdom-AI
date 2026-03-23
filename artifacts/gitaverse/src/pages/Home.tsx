@@ -8,6 +8,7 @@ import PageLayout from "@/components/PageLayout";
 import CalmMode from "@/components/CalmMode";
 import EmailCaptureModal, { hasEmailCaptured, hasEmailDismissed } from "@/components/EmailCaptureModal";
 import { useLanguage } from "@/contexts/LanguageContext";
+import ProductDemoVideo from "@/components/ProductDemoVideo";
 
 const MOODS = [
   { emoji: "😔", label: "Stressed",  prompt: "I feel stressed and overwhelmed" },
@@ -320,27 +321,9 @@ export default function Home() {
                     />
                 */}
 
-                {/* Placeholder — remove once real video is added */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-6">
-                  {/* Subtle lotus watermark */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-[0.06] text-[160px] select-none pointer-events-none">🪷</div>
-
-                  {/* Play button */}
-                  <div className="relative z-10 w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center backdrop-blur-sm shadow-lg hover:bg-white/20 transition-colors cursor-pointer group">
-                    <div className="w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[18px] border-l-white/80 ml-1 group-hover:border-l-white transition-colors" />
-                  </div>
-
-                  {/* Text */}
-                  <div className="relative z-10 text-center">
-                    <p className="text-white/80 font-semibold text-base mb-1">Demo Video Coming Soon</p>
-                    <p className="text-white/40 text-sm font-light">Your video will appear here</p>
-                  </div>
-
-                  {/* Bottom pill */}
-                  <div className="relative z-10 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/8 border border-white/10 backdrop-blur-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
-                    <span className="text-[11px] text-white/50 font-medium tracking-wide">gitaverse.replit.app</span>
-                  </div>
+                {/* Animated product demo */}
+                <div className="absolute inset-0">
+                  <ProductDemoVideo />
                 </div>
               </div>
             </div>
