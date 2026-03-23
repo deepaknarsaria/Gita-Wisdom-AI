@@ -133,16 +133,18 @@ export default function Home() {
       pro: 150,
       premium: "unlimited",
     };
+    const chatLimit = chatLimitMap[plan];
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + 30);
 
-    localStorage.setItem("gitaverse_premium", plan);
-    localStorage.setItem("gitaverse_chat_limit", String(chatLimitMap[plan]));
-    localStorage.setItem("gitaverse_chats_used", "0");
-    localStorage.setItem("gitaverse_expiry", expiry.toISOString());
+    localStorage.setItem("plan", plan);
+    localStorage.setItem("chatLimit", String(chatLimit));
+    localStorage.setItem("chatsUsed", "0");
+    localStorage.setItem("expiryDate", expiry.toISOString());
     localStorage.removeItem("gitaverse_pending_plan");
     setPaidPlan(null);
     setActivatedPlan(plan);
+    alert("Payment successful! Plan activated.");
   };
   const { t } = useLanguage();
 

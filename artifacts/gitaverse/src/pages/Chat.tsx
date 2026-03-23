@@ -20,23 +20,23 @@ const PREMIUM_KEY = "gitaverse_premium";
 
 // --- Plan limit helpers ---
 function getActivePlan(): string | null {
-  return localStorage.getItem(PREMIUM_KEY) || null;
+  return localStorage.getItem("plan") || null;
 }
 function getChatLimit(): number | "unlimited" {
-  const raw = localStorage.getItem("gitaverse_chat_limit");
+  const raw = localStorage.getItem("chatLimit");
   if (!raw) return FREE_LIMIT;
   if (raw === "unlimited") return "unlimited";
   return parseInt(raw, 10);
 }
 function getPlanChatsUsed(): number {
   const plan = getActivePlan();
-  if (plan) return parseInt(localStorage.getItem("gitaverse_chats_used") || "0", 10);
+  if (plan) return parseInt(localStorage.getItem("chatsUsed") || "0", 10);
   return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
 }
 function incrementChats(isPaidPlan: boolean) {
   if (isPaidPlan) {
-    const next = parseInt(localStorage.getItem("gitaverse_chats_used") || "0", 10) + 1;
-    localStorage.setItem("gitaverse_chats_used", String(next));
+    const next = parseInt(localStorage.getItem("chatsUsed") || "0", 10) + 1;
+    localStorage.setItem("chatsUsed", String(next));
   } else {
     const next = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10) + 1;
     localStorage.setItem(STORAGE_KEY, String(next));
@@ -144,7 +144,12 @@ export default function Chat() {
     chatLimit !== "unlimited" && chatsUsed >= (chatLimit as number);
 
   const handleUpgrade = () => {
-    localStorage.setItem(PREMIUM_KEY, "true");
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 30);
+    localStorage.setItem("plan", "premium");
+    localStorage.setItem("chatLimit", "unlimited");
+    localStorage.setItem("chatsUsed", "0");
+    localStorage.setItem("expiryDate", expiry.toISOString());
     setIsPremium(true);
   };
 
