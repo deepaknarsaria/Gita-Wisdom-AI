@@ -107,25 +107,29 @@ export default function Home() {
       image: `${import.meta.env.BASE_URL}favicon.svg`,
       theme: { color: "#e07a2b" },
       modal: { ondismiss: () => selectPendingPlan(plan) },
-      handler: (response: any) => {
-        fetch(`${import.meta.env.BASE_URL}api/razorpay/verify-payment`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(response),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success) {
-              activatePlan(plan);
-            } else {
-              alert("Payment verification failed");
-            }
-          });
+      handler: function (response: any) {
+        verifyPayment(response, plan);
       },
     };
     const rzp = new RazorpayConstructor(options);
     rzp.open();
   };
+
+  function verifyPayment(response: any, plan: string) {
+    fetch(`${import.meta.env.BASE_URL}api/razorpay/verify-payment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(response),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          activatePlan(plan);
+        } else {
+          alert("Payment verification failed");
+        }
+      });
+  }
 
   const activatePlan = (plan: string) => {
     const chatLimitMap: Record<string, number | "unlimited"> = {
