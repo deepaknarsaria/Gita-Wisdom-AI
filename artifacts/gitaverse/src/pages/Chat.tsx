@@ -144,13 +144,8 @@ export default function Chat() {
     chatLimit !== "unlimited" && chatsUsed >= (chatLimit as number);
 
   const handleUpgrade = () => {
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + 30);
-    localStorage.setItem("plan", "premium");
-    localStorage.setItem("chatLimit", "unlimited");
-    localStorage.setItem("chatsUsed", "0");
-    localStorage.setItem("expiryDate", expiry.toISOString());
-    setIsPremium(true);
+    setIsPaywallOpen(false);
+    setLocation("/");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

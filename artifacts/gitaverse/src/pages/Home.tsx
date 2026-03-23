@@ -107,7 +107,18 @@ export default function Home() {
   };
 
   function verifyPayment(response: any, plan: string) {
-    if (!response.razorpay_payment_id) {
+    console.log("[GitaVerse] Payment response received:", {
+      payment_id: response.razorpay_payment_id,
+      order_id: response.razorpay_order_id,
+      has_signature: !!response.razorpay_signature,
+    });
+
+    if (
+      !response.razorpay_payment_id ||
+      !response.razorpay_order_id ||
+      !response.razorpay_signature
+    ) {
+      console.warn("[GitaVerse] Payment response missing required fields — aborting");
       alert("Payment failed or cancelled");
       return;
     }
@@ -124,10 +135,16 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
+          console.log("[GitaVerse] Verification success — activating plan:", plan);
           activatePlan(plan);
         } else {
+          console.warn("[GitaVerse] Verification failed — signature mismatch");
           alert("Payment verification failed");
         }
+      })
+      .catch((err) => {
+        console.error("[GitaVerse] Verification request error:", err);
+        alert("Could not verify payment. Please contact support.");
       });
   }
 
@@ -145,6 +162,7 @@ export default function Home() {
     localStorage.setItem("chatLimit", String(chatLimit));
     localStorage.setItem("chatsUsed", "0");
     localStorage.setItem("expiryDate", expiry.toISOString());
+    console.log("[GitaVerse] Plan activated:", plan, "| limit:", chatLimit, "| expiry:", expiry.toISOString());
     alert("Payment successful! Plan activated.");
   };
   const { t } = useLanguage();
