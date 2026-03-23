@@ -65,6 +65,7 @@ export default function Chat() {
 
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const emailPopupTriggered = useRef(false);
   const [hasSentInitial, setHasSentInitial] = useState(false);
   const [activePlan] = useState<string | null>(getActivePlan);
   const [chatsUsed, setChatsUsed] = useState<number>(getPlanChatsUsed);
@@ -105,11 +106,12 @@ export default function Chat() {
     }
   }, []);
 
-  // After 2 messages — show email capture if not already captured
+  // After 2 messages — show email capture once if not already captured
   useEffect(() => {
-    if (!conversation || !canShowEmail()) return;
+    if (!conversation || !canShowEmail() || emailPopupTriggered.current) return;
     const userMsgCount = (conversation.messages as any[]).filter((m) => m.role === "user").length;
     if (userMsgCount >= 2) {
+      emailPopupTriggered.current = true;
       openEmailPopup();
     }
   }, [conversation?.messages?.length]);
