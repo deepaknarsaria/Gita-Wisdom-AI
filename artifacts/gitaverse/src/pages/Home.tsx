@@ -77,19 +77,11 @@ export default function Home() {
   const [calmOpen, setCalmOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
-  const [paidPlan, setPaidPlan] = useState<string | null>(() => localStorage.getItem("gitaverse_pending_plan"));
-  const [activatedPlan, setActivatedPlan] = useState<string | null>(null);
-
-  const selectPendingPlan = (plan: string) => {
-    localStorage.setItem("gitaverse_pending_plan", plan);
-    setPaidPlan(plan);
-  };
 
   const openPayment = (plan: string) => {
     const amounts: Record<string, number> = { basic: 19900, pro: 29900, premium: 39900 };
     const RazorpayConstructor = (window as any).Razorpay;
     if (!RazorpayConstructor) {
-      selectPendingPlan(plan);
       window.open(
         plan === "basic" ? "https://rzp.io/rzp/wAkwfr27"
         : plan === "pro" ? "https://rzp.io/rzp/RakQ9by6"
@@ -106,7 +98,6 @@ export default function Home() {
       description: `${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan — 30 days`,
       image: `${import.meta.env.BASE_URL}favicon.svg`,
       theme: { color: "#e07a2b" },
-      modal: { ondismiss: () => selectPendingPlan(plan) },
       handler: function (response: any) {
         verifyPayment(response, plan);
       },
@@ -154,9 +145,6 @@ export default function Home() {
     localStorage.setItem("chatLimit", String(chatLimit));
     localStorage.setItem("chatsUsed", "0");
     localStorage.setItem("expiryDate", expiry.toISOString());
-    localStorage.removeItem("gitaverse_pending_plan");
-    setPaidPlan(null);
-    setActivatedPlan(plan);
     alert("Payment successful! Plan activated.");
   };
   const { t } = useLanguage();
@@ -610,11 +598,6 @@ export default function Home() {
                 >
                   Start Basic
                 </button>
-                {paidPlan === "basic" && (
-                  <p className="mt-3 text-[11px] text-center text-primary/70 font-medium leading-snug">
-                    Complete your payment and return to activate your plan.
-                  </p>
-                )}
               </motion.div>
 
               {/* PRO — Most Popular */}
@@ -653,11 +636,6 @@ export default function Home() {
                 >
                   Choose Pro
                 </button>
-                {paidPlan === "pro" && (
-                  <p className="mt-3 text-[11px] text-center text-primary/70 font-medium leading-snug">
-                    Complete your payment and return to activate your plan.
-                  </p>
-                )}
               </motion.div>
 
               {/* PREMIUM — Best Value */}
@@ -696,11 +674,6 @@ export default function Home() {
                 >
                   Go Premium
                 </button>
-                {paidPlan === "premium" && (
-                  <p className="mt-3 text-[11px] text-center text-amber-600/80 font-medium leading-snug">
-                    Complete your payment and return to activate your plan.
-                  </p>
-                )}
               </motion.div>
 
             </div>
@@ -720,74 +693,6 @@ export default function Home() {
               </p>
             </div>
           </motion.div>
-
-          {/* Activate Plan Section — shown after payment redirect */}
-          {(paidPlan || activatedPlan) && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mt-10 w-full max-w-lg mx-auto"
-            >
-              <div className="rounded-2xl border border-orange-200 bg-white/90 backdrop-blur-sm shadow-lg shadow-orange-900/8 px-8 py-8 text-center">
-                {activatedPlan ? (
-                  /* Success state */
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-green-50 border border-green-200 flex items-center justify-center mb-1">
-                      <svg className="w-6 h-6 text-green-500" viewBox="0 0 24 24" fill="none">
-                        <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                    <h3 className="text-lg font-display font-bold text-foreground capitalize">
-                      {activatedPlan} Plan Activated!
-                    </h3>
-                    <p className="text-sm text-foreground/55 font-light">
-                      Your plan is now active. Enjoy your Gita guidance.
-                    </p>
-                    <button
-                      onClick={() => handleStartChat()}
-                      className="mt-3 px-8 py-3 rounded-full bg-gradient-to-r from-primary to-orange-400 text-white text-sm font-bold shadow-md hover:-translate-y-0.5 transition-all"
-                    >
-                      Ask Krishna Now →
-                    </button>
-                  </div>
-                ) : (
-                  /* Activation state */
-                  <>
-                    <div className="w-10 h-10 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 15v2m0-10v5m-7 4a7 7 0 1114 0H5z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-display font-bold text-foreground mb-2">
-                      Activate Your Plan
-                    </h3>
-                    <p className="text-sm text-foreground/50 font-light mb-7 leading-relaxed">
-                      Once payment is completed, select your plan below to unlock access.
-                    </p>
-                    <div className="flex flex-col gap-3">
-                      {[
-                        { label: "I purchased Basic", plan: "basic", style: "border-2 border-orange-200 text-primary hover:bg-orange-50" },
-                        { label: "I purchased Pro", plan: "pro", style: "bg-gradient-to-r from-primary to-orange-400 text-white shadow-md shadow-primary/20 hover:from-primary/90" },
-                        { label: "I purchased Premium", plan: "premium", style: "border-2 border-amber-300 text-amber-700 hover:bg-amber-50" },
-                      ].map(({ label, plan, style }) => (
-                        <button
-                          key={plan}
-                          onClick={() => activatePlan(plan)}
-                          className={`w-full py-3 rounded-full text-sm font-semibold transition-all hover:-translate-y-0.5 ${style}`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                    <p className="text-[10px] text-foreground/30 mt-5 font-light">
-                      Only click after your Razorpay payment is confirmed.
-                    </p>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          )}
 
           {/* FAQ Section */}
           <motion.div
