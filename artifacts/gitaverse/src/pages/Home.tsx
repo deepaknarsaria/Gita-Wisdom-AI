@@ -77,6 +77,7 @@ export default function Home() {
   const [calmOpen, setCalmOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
+  const [paidPlan, setPaidPlan] = useState<string | null>(null);
   const { t } = useLanguage();
 
   // Exit intent — show email capture when cursor leaves to top of page
@@ -523,11 +524,16 @@ export default function Home() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => handleStartChat()}
+                  onClick={() => { window.open("https://rzp.io/rzp/wAkwfr27", "_blank"); setPaidPlan("basic"); }}
                   className="w-full py-3 rounded-full border-2 border-orange-200 text-primary text-sm font-semibold hover:bg-orange-50 transition-colors"
                 >
                   Start Basic
                 </button>
+                {paidPlan === "basic" && (
+                  <p className="mt-3 text-[11px] text-center text-primary/70 font-medium leading-snug">
+                    Complete your payment and return to activate your plan.
+                  </p>
+                )}
               </motion.div>
 
               {/* PRO — Most Popular */}
@@ -561,11 +567,16 @@ export default function Home() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => handleStartChat()}
+                  onClick={() => { window.open("https://rzp.io/rzp/RakQ9by6", "_blank"); setPaidPlan("pro"); }}
                   className="w-full py-3 rounded-full bg-gradient-to-r from-primary to-orange-400 text-white text-sm font-bold hover:from-primary/90 hover:to-orange-500 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
                 >
                   Choose Pro
                 </button>
+                {paidPlan === "pro" && (
+                  <p className="mt-3 text-[11px] text-center text-primary/70 font-medium leading-snug">
+                    Complete your payment and return to activate your plan.
+                  </p>
+                )}
               </motion.div>
 
               {/* PREMIUM — Best Value */}
@@ -599,11 +610,16 @@ export default function Home() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => handleStartChat()}
+                  onClick={() => { window.open("https://rzp.io/rzp/LxnETJ7", "_blank"); setPaidPlan("premium"); }}
                   className="w-full py-3 rounded-full border-2 border-amber-400 text-amber-700 text-sm font-bold hover:bg-amber-50 transition-colors"
                 >
                   Go Premium
                 </button>
+                {paidPlan === "premium" && (
+                  <p className="mt-3 text-[11px] text-center text-amber-600/80 font-medium leading-snug">
+                    Complete your payment and return to activate your plan.
+                  </p>
+                )}
               </motion.div>
 
             </div>
