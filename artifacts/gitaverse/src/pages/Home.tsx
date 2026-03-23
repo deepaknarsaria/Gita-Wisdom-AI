@@ -107,27 +107,20 @@ export default function Home() {
       image: `${import.meta.env.BASE_URL}favicon.svg`,
       theme: { color: "#e07a2b" },
       modal: { ondismiss: () => selectPendingPlan(plan) },
-      handler: async (response: any) => {
-        if (response.razorpay_order_id && response.razorpay_signature) {
-          try {
-            const res = await fetch(`${import.meta.env.BASE_URL}api/razorpay/verify-payment`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-            const data = await res.json();
-            if (!data.success) {
-              console.warn("Signature verification failed — activating anyway for now");
+      handler: (response: any) => {
+        fetch(`${import.meta.env.BASE_URL}api/razorpay/verify-payment`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(response),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              activatePlan(plan);
+            } else {
+              alert("Payment verification failed");
             }
-          } catch (err) {
-            console.error("Verification request failed", err);
-          }
-        }
-        activatePlan(plan);
+          });
       },
     };
     const rzp = new RazorpayConstructor(options);
