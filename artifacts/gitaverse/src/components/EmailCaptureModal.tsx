@@ -110,10 +110,10 @@ function EmailCaptureContent({ onClose }: { onClose: () => void }) {
                     <Flower2 className="w-6 h-6 text-primary" />
                   </div>
                   <h2 className="font-display text-xl font-bold text-foreground leading-tight mb-2">
-                    Get Deeper Gita Guidance
+                    Continue Your Gita Journey
                   </h2>
                   <p className="text-sm text-foreground/60 font-medium leading-relaxed">
-                    Enter your email to save your progress and receive wisdom updates.
+                    Enter your email to save your progress and receive deeper guidance.
                   </p>
                 </div>
 
