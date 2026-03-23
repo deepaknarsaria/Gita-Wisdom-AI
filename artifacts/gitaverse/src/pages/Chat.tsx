@@ -164,6 +164,9 @@ export default function Chat() {
   const handleUpgrade = () => {
     setIsPaywallOpen(false);
     setLocation("/");
+    setTimeout(() => {
+      document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+    }, 300);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
