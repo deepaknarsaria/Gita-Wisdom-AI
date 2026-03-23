@@ -33,6 +33,11 @@ function getPlanChatsUsed(): number {
 function incrementChats() {
   const next = parseInt(localStorage.getItem("chatsUsed") || "0", 10) + 1;
   localStorage.setItem("chatsUsed", String(next));
+  // Persist per email so usage survives logout
+  const email = localStorage.getItem("userEmail");
+  if (email) {
+    localStorage.setItem(`emailUsage:${email}`, String(next));
+  }
 }
 
 function formatForShare(text: string): string {
@@ -119,6 +124,16 @@ export default function Chat() {
     };
     document.addEventListener("mouseleave", handleMouseLeave);
     return () => document.removeEventListener("mouseleave", handleMouseLeave);
+  }, []);
+
+  // When email is captured, restore chatsUsed from per-email storage
+  useEffect(() => {
+    const onEmailCaptured = () => {
+      const restored = parseInt(localStorage.getItem("chatsUsed") || "0", 10);
+      setChatsUsed(restored);
+    };
+    window.addEventListener("userEmailCaptured", onEmailCaptured);
+    return () => window.removeEventListener("userEmailCaptured", onEmailCaptured);
   }, []);
 
   // Auto-scroll to bottom

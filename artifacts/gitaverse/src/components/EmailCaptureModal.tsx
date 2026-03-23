@@ -40,7 +40,20 @@ function EmailCaptureContent({ onClose }: { onClose: () => void }) {
     setError("");
     localStorage.setItem(STORAGE_KEY, trimmed);
     localStorage.setItem("userEmail", trimmed);
-    console.log("New user email captured:", trimmed);
+
+    // Restore or save per-email usage so it survives logout
+    const savedUsage = localStorage.getItem(`emailUsage:${trimmed}`);
+    const currentUsed = parseInt(localStorage.getItem("chatsUsed") || "0", 10);
+    if (savedUsage !== null) {
+      // Returning user — restore their previous usage (take the higher of the two)
+      const prevUsed = parseInt(savedUsage, 10);
+      const restored = Math.max(prevUsed, currentUsed);
+      localStorage.setItem("chatsUsed", String(restored));
+    } else {
+      // First time this email is seen — lock in current usage
+      localStorage.setItem(`emailUsage:${trimmed}`, String(currentUsed));
+    }
+
     window.dispatchEvent(new CustomEvent("userEmailCaptured", { detail: trimmed }));
     setSubmitted(true);
     setTimeout(() => {
