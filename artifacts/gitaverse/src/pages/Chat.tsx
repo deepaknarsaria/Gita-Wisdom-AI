@@ -18,6 +18,31 @@ const FREE_LIMIT = 5;
 const STORAGE_KEY = "gitaverse_free_used";
 const PREMIUM_KEY = "gitaverse_premium";
 
+// --- Plan limit helpers ---
+function getActivePlan(): string | null {
+  return localStorage.getItem(PREMIUM_KEY) || null;
+}
+function getChatLimit(): number | "unlimited" {
+  const raw = localStorage.getItem("gitaverse_chat_limit");
+  if (!raw) return FREE_LIMIT;
+  if (raw === "unlimited") return "unlimited";
+  return parseInt(raw, 10);
+}
+function getPlanChatsUsed(): number {
+  const plan = getActivePlan();
+  if (plan) return parseInt(localStorage.getItem("gitaverse_chats_used") || "0", 10);
+  return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+}
+function incrementChats(isPaidPlan: boolean) {
+  if (isPaidPlan) {
+    const next = parseInt(localStorage.getItem("gitaverse_chats_used") || "0", 10) + 1;
+    localStorage.setItem("gitaverse_chats_used", String(next));
+  } else {
+    const next = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10) + 1;
+    localStorage.setItem(STORAGE_KEY, String(next));
+  }
+}
+
 function formatForShare(text: string): string {
   const clean = text
     .replace(/\[(EMPATHY|GITA INSIGHT|GITA TEACHING|ACTION STEPS|STEP-BY-STEP GUIDANCE|GITA REFERENCE[S]?|REFLECTION QUESTION|CLOSING (?:LINE|WISDOM)|ROOT CAUSE)\]/gi, "")
@@ -29,15 +54,6 @@ function formatForShare(text: string): string {
   return `💫 *GitaVerse Wisdom*\n\n${clean}\n\n🌿 _Get your own Gita guidance at GitaVerse_`;
 }
 
-function getStoredCount(): number {
-  return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
-}
-function setStoredCount(n: number) {
-  localStorage.setItem(STORAGE_KEY, String(n));
-}
-function getIsPremium(): boolean {
-  return localStorage.getItem(PREMIUM_KEY) === "true";
-}
 
 export default function Chat() {
   const [location, setLocation] = useLocation();
@@ -49,8 +65,9 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [hasSentInitial, setHasSentInitial] = useState(false);
-  const [freeUsed, setFreeUsed] = useState<number>(getStoredCount);
-  const [isPremium, setIsPremium] = useState<boolean>(getIsPremium);
+  const [activePlan] = useState<string | null>(getActivePlan);
+  const [chatsUsed, setChatsUsed] = useState<number>(getPlanChatsUsed);
+  const [isPremium, setIsPremium] = useState<boolean>(() => !!getActivePlan());
   const [deepGuidance, setDeepGuidance] = useState(false);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [isEmailOpen, setIsEmailOpen] = useState(false);
@@ -95,14 +112,14 @@ export default function Chat() {
     scrollToBottom();
   }, [conversation?.messages, streamingMessage]);
 
-  // Sync freeUsed: take whichever is higher — localStorage or DB user message count
+  // Sync chatsUsed: take whichever is higher — localStorage or DB user message count
   useEffect(() => {
-    if (conversation) {
+    if (conversation && !activePlan) {
       const dbUserCount = (conversation.messages as any[]).filter(m => m.role === "user").length;
-      const stored = getStoredCount();
+      const stored = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
       const synced = Math.max(stored, dbUserCount);
-      setStoredCount(synced);
-      setFreeUsed(synced);
+      localStorage.setItem(STORAGE_KEY, String(synced));
+      setChatsUsed(synced);
     }
   }, [conversation?.id]);
 
@@ -110,9 +127,9 @@ export default function Chat() {
   useEffect(() => {
     if (initialPrompt && conversation && !hasSentInitial && conversation.messages.length === 0) {
       setHasSentInitial(true);
-      const next = getStoredCount() + 1;
-      setStoredCount(next);
-      setFreeUsed(next);
+      const next = chatsUsed + 1;
+      setChatsUsed(next);
+      incrementChats(!!activePlan);
       sendMessage(initialPrompt, false, language);
       
       // Clean up URL to avoid resending on refresh
@@ -122,7 +139,9 @@ export default function Chat() {
     }
   }, [initialPrompt, conversation, hasSentInitial, sendMessage]);
 
-  const isLimitReached = !isPremium && freeUsed >= FREE_LIMIT;
+  const chatLimit = getChatLimit();
+  const isLimitReached =
+    chatLimit !== "unlimited" && chatsUsed >= (chatLimit as number);
 
   const handleUpgrade = () => {
     localStorage.setItem(PREMIUM_KEY, "true");
@@ -131,11 +150,16 @@ export default function Chat() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isStreaming || isLimitReached) return;
-    
-    const next = freeUsed + 1;
-    setFreeUsed(next);
-    setStoredCount(next);
+    if (!input.trim() || isStreaming) return;
+
+    if (isLimitReached) {
+      setIsPaywallOpen(true);
+      return;
+    }
+
+    const next = chatsUsed + 1;
+    setChatsUsed(next);
+    incrementChats(!!activePlan);
 
     const userMessage = input;
     setInput("");
@@ -511,9 +535,9 @@ export default function Chat() {
               AI can make mistakes. Reflect deeply on the guidance received.
             </p>
           )}
-          {!isLimitReached && (
+          {!isLimitReached && chatLimit !== "unlimited" && (
             <p className="text-center text-[11px] text-muted-foreground/50 mt-1 tracking-wide">
-              {FREE_LIMIT - freeUsed} free {FREE_LIMIT - freeUsed === 1 ? "message" : "messages"} remaining
+              {(chatLimit as number) - chatsUsed} {activePlan ? `${activePlan} plan` : "free"} {((chatLimit as number) - chatsUsed) === 1 ? "message" : "messages"} remaining
             </p>
           )}
         </div>
