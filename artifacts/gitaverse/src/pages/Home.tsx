@@ -478,6 +478,142 @@ export default function Home() {
             </AnimatePresence>
           </motion.div>
 
+          {/* Pricing Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="mt-16 w-full"
+          >
+            {/* Header */}
+            <div className="text-center mb-10">
+              <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest mb-2">Simple Pricing</p>
+              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground tracking-tight mb-3">
+                Choose Your Path to Clarity
+              </h2>
+              <p className="text-sm text-foreground/50 font-light">
+                Start free, upgrade for deeper Gita guidance
+              </p>
+            </div>
+
+            {/* Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
+
+              {/* BASIC */}
+              <motion.div
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col rounded-2xl border border-orange-100 bg-white/80 backdrop-blur-sm shadow-sm shadow-orange-900/5 px-7 py-8"
+              >
+                <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/40 mb-4">Basic</p>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="text-4xl font-display font-bold text-foreground">₹199</span>
+                </div>
+                <p className="text-[11px] text-foreground/40 font-light mb-6">per 30 days</p>
+                <ul className="flex flex-col gap-3 mb-8 flex-1">
+                  {["50 chats / 30 days", "Standard guidance"].map((f) => (
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-foreground/65">
+                      <span className="w-4 h-4 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center shrink-0">
+                        <svg className="w-2.5 h-2.5 text-primary" viewBox="0 0 12 12" fill="none">
+                          <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => handleStartChat()}
+                  className="w-full py-3 rounded-full border-2 border-orange-200 text-primary text-sm font-semibold hover:bg-orange-50 transition-colors"
+                >
+                  Start Basic
+                </button>
+              </motion.div>
+
+              {/* PRO — Most Popular */}
+              <motion.div
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col rounded-2xl border-2 border-primary bg-gradient-to-b from-orange-50/80 to-white/90 backdrop-blur-sm shadow-xl shadow-primary/10 px-7 py-8 relative"
+              >
+                {/* Badge */}
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-primary to-orange-400 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-full shadow-md whitespace-nowrap">
+                    Most Popular
+                  </span>
+                </div>
+
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-4">Pro</p>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="text-4xl font-display font-bold text-foreground">₹299</span>
+                </div>
+                <p className="text-[11px] text-foreground/40 font-light mb-6">per 30 days</p>
+                <ul className="flex flex-col gap-3 mb-8 flex-1">
+                  {["150 chats / 30 days", "Better structured answers", "Faster responses"].map((f) => (
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-foreground/75">
+                      <span className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                        <svg className="w-2.5 h-2.5 text-primary" viewBox="0 0 12 12" fill="none">
+                          <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => handleStartChat()}
+                  className="w-full py-3 rounded-full bg-gradient-to-r from-primary to-orange-400 text-white text-sm font-bold hover:from-primary/90 hover:to-orange-500 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
+                >
+                  Choose Pro
+                </button>
+              </motion.div>
+
+              {/* PREMIUM — Best Value */}
+              <motion.div
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
+                className="flex flex-col rounded-2xl border border-amber-200 bg-gradient-to-b from-amber-50/60 to-white/90 backdrop-blur-sm shadow-md shadow-amber-900/8 px-7 py-8 relative"
+              >
+                {/* Badge */}
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-amber-500 to-yellow-400 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1 rounded-full shadow-md whitespace-nowrap">
+                    Best Value
+                  </span>
+                </div>
+
+                <p className="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-4">Premium</p>
+                <div className="flex items-end gap-1 mb-1">
+                  <span className="text-4xl font-display font-bold text-foreground">₹399</span>
+                </div>
+                <p className="text-[11px] text-foreground/40 font-light mb-6">per 30 days</p>
+                <ul className="flex flex-col gap-3 mb-8 flex-1">
+                  {["Unlimited chats", "Deep Gita insights", "Priority responses"].map((f) => (
+                    <li key={f} className="flex items-center gap-2.5 text-sm text-foreground/75">
+                      <span className="w-4 h-4 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                        <svg className="w-2.5 h-2.5 text-amber-600" viewBox="0 0 12 12" fill="none">
+                          <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => handleStartChat()}
+                  className="w-full py-3 rounded-full border-2 border-amber-400 text-amber-700 text-sm font-bold hover:bg-amber-50 transition-colors"
+                >
+                  Go Premium
+                </button>
+              </motion.div>
+
+            </div>
+
+            {/* Footer note */}
+            <p className="text-center text-[11px] text-foreground/35 mt-5 font-light">
+              No hidden fees · Cancel anytime · Payments secure
+            </p>
+          </motion.div>
+
           {/* FAQ Section */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
