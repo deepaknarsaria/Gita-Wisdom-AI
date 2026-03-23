@@ -648,10 +648,20 @@ export default function Home() {
 
             </div>
 
-            {/* Footer note */}
-            <p className="text-center text-[11px] text-foreground/35 mt-5 font-light">
-              No hidden fees · Cancel anytime · Payments secure
-            </p>
+            {/* Footer trust notes */}
+            <div className="flex flex-col items-center gap-2 mt-6">
+              <div className="flex items-center gap-2">
+                <svg className="w-3.5 h-3.5 text-green-500 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"/>
+                </svg>
+                <p className="text-[12px] text-foreground/55 font-medium">
+                  Secure payment powered by Razorpay • Instant access activation
+                </p>
+              </div>
+              <p className="text-[11px] text-foreground/35 font-light">
+                30-day access • No auto-renewal
+              </p>
+            </div>
           </motion.div>
 
           {/* Activate Plan Section — shown after payment redirect */}
