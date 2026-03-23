@@ -39,6 +39,8 @@ function EmailCaptureContent({ onClose }: { onClose: () => void }) {
     }
     setError("");
     localStorage.setItem(STORAGE_KEY, trimmed);
+    localStorage.setItem("userEmail", trimmed);
+    console.log("New user email captured:", trimmed);
     setSubmitted(true);
     setTimeout(() => {
       onClose();
