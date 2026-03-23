@@ -216,6 +216,54 @@ export default function Chat() {
         </div>
       </div>
 
+      {/* Usage Bar */}
+      {(() => {
+        if (chatLimit === "unlimited") {
+          return (
+            <div className="relative z-10 w-full bg-gradient-to-r from-amber-50/80 to-orange-50/60 border-b border-amber-100/60">
+              <div className="max-w-3xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-center gap-2">
+                <Sparkles className="w-3 h-3 text-amber-500 shrink-0" />
+                <span className="text-[11px] font-semibold text-amber-700 tracking-wide">Unlimited access active</span>
+              </div>
+            </div>
+          );
+        }
+        const limit = chatLimit as number;
+        const used = chatsUsed;
+        const pct = Math.min((used / limit) * 100, 100);
+        const planLabel = activePlan
+          ? activePlan.charAt(0).toUpperCase() + activePlan.slice(1)
+          : "Free";
+        const isNearLimit = pct >= 80;
+        return (
+          <div className="relative z-10 w-full bg-white/60 backdrop-blur-sm border-b border-orange-100/50">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-3">
+              <span className={`text-[11px] font-medium shrink-0 ${isNearLimit ? "text-red-500" : "text-foreground/50"}`}>
+                {planLabel} plan
+              </span>
+              {/* Progress bar */}
+              <div className="flex-1 h-1.5 rounded-full bg-orange-100 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${isNearLimit ? "bg-red-400" : "bg-gradient-to-r from-primary to-orange-400"}`}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <span className={`text-[11px] font-semibold shrink-0 tabular-nums ${isNearLimit ? "text-red-500" : "text-foreground/60"}`}>
+                {used} / {limit}
+              </span>
+              {isNearLimit && (
+                <button
+                  onClick={() => setIsPaywallOpen(true)}
+                  className="text-[10px] font-bold text-primary underline underline-offset-2 shrink-0 hover:text-orange-600 transition-colors"
+                >
+                  Upgrade
+                </button>
+              )}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Chat Area */}
       <main className="relative z-10 flex-1 overflow-y-auto px-4 sm:px-6 py-8">
         <div className="max-w-3xl mx-auto flex flex-col gap-8 pb-8">
