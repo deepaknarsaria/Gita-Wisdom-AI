@@ -21,9 +21,9 @@ router.post("/verify-payment", (req, res) => {
     .digest("hex");
 
   if (expectedSignature === razorpay_signature) {
-    return res.json({ success: true, payment_id: razorpay_payment_id });
+    res.json({ success: true });
   } else {
-    return res.status(400).json({ success: false, message: "Invalid signature" });
+    res.json({ success: false });
   }
 });
 
