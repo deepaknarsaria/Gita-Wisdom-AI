@@ -7,7 +7,8 @@ import { Send, Flower2, Loader2, Sparkles, Bookmark, BookmarkCheck, Volume2, Pau
 import { Button } from "@/components/ui/button";
 import { useChatStream } from "@/hooks/use-chat-stream";
 import PaywallModal from "@/components/PaywallModal";
-import EmailCaptureModal, { hasEmailCaptured, hasEmailDismissed } from "@/components/EmailCaptureModal";
+import { hasEmailCaptured, hasEmailDismissed } from "@/components/EmailCaptureModal";
+import { openEmailPopup } from "@/lib/emailPopup";
 import AppHeader from "@/components/AppHeader";
 import { useSavedGuidance } from "@/hooks/useSavedGuidance";
 import { useToast } from "@/hooks/use-toast";
@@ -70,14 +71,13 @@ export default function Chat() {
   const [isPremium, setIsPremium] = useState<boolean>(() => !!getActivePlan());
   const [deepGuidance, setDeepGuidance] = useState(false);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
-  const [isEmailOpen, setIsEmailOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { language } = useLanguage();
 
   const canShowEmail = () => !hasEmailCaptured() && !hasEmailDismissed();
 
   const openEmailIfEligible = () => {
-    if (canShowEmail()) setIsEmailOpen(true);
+    if (canShowEmail()) openEmailPopup();
   };
 
   const { data: conversation, isLoading, isError } = useGetOpenaiConversation(conversationId, {
@@ -99,7 +99,7 @@ export default function Chat() {
     if (isFirstVisit) {
       localStorage.setItem("gitaverse_visited", "1");
       const timer = setTimeout(() => {
-        if (canShowEmail()) setIsEmailOpen(true);
+        if (canShowEmail()) openEmailPopup();
       }, 1500);
       return () => clearTimeout(timer);
     }
@@ -107,10 +107,10 @@ export default function Chat() {
 
   // After 2 messages — show email capture if not already captured
   useEffect(() => {
-    if (!conversation || !canShowEmail() || isEmailOpen) return;
+    if (!conversation || !canShowEmail()) return;
     const userMsgCount = (conversation.messages as any[]).filter((m) => m.role === "user").length;
     if (userMsgCount >= 2) {
-      setIsEmailOpen(true);
+      openEmailPopup();
     }
   }, [conversation?.messages?.length]);
 
@@ -118,7 +118,7 @@ export default function Chat() {
   useEffect(() => {
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0 && canShowEmail()) {
-        setIsEmailOpen(true);
+        openEmailPopup();
       }
     };
     document.addEventListener("mouseleave", handleMouseLeave);
@@ -501,7 +501,6 @@ export default function Chat() {
         onUpgrade={() => { handleUpgrade(); setIsPaywallOpen(false); }}
         onClose={() => { setIsPaywallOpen(false); openEmailIfEligible(); }}
       />
-      <EmailCaptureModal open={isEmailOpen} onClose={() => setIsEmailOpen(false)} />
 
       {/* Input Area */}
       <footer className="relative z-10 shrink-0 bg-gradient-to-t from-background via-background/95 to-transparent pb-6 pt-10 px-4 sm:px-6">

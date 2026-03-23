@@ -3,13 +3,12 @@ import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import EmailCaptureModal from "@/components/EmailCaptureModal";
+import { openEmailPopup } from "@/lib/emailPopup";
 
 export default function AppHeader() {
   const [location, setLocation] = useLocation();
   const { language, setLanguage } = useLanguage();
   const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
-  const [showEmailCapture, setShowEmailCapture] = useState(false);
 
   // Keep in sync when email is captured in same tab or another tab
   useEffect(() => {
@@ -27,7 +26,7 @@ export default function AppHeader() {
     if (userEmail) {
       alert("You are already logged in");
     } else {
-      setShowEmailCapture(true);
+      openEmailPopup();
     }
   };
 
@@ -147,10 +146,6 @@ export default function AppHeader() {
         </div>
       </header>
 
-      <EmailCaptureModal
-        open={showEmailCapture}
-        onClose={() => setShowEmailCapture(false)}
-      />
     </>
   );
 }

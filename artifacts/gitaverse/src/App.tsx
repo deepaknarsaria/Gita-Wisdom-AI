@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -11,6 +12,8 @@ import DailyWisdom from "@/pages/DailyWisdom";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import SavedGuidance from "@/pages/SavedGuidance";
+import EmailCaptureModal from "@/components/EmailCaptureModal";
+import { onOpenEmailPopup } from "@/lib/emailPopup";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,6 +40,12 @@ function Router() {
 }
 
 function App() {
+  const [emailOpen, setEmailOpen] = useState(false);
+
+  useEffect(() => {
+    return onOpenEmailPopup(() => setEmailOpen(true));
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -45,6 +54,7 @@ function App() {
             <Router />
           </WouterRouter>
           <Toaster />
+          <EmailCaptureModal open={emailOpen} onClose={() => setEmailOpen(false)} />
         </LanguageProvider>
       </TooltipProvider>
     </QueryClientProvider>
