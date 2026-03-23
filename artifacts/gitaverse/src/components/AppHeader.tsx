@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,6 +10,19 @@ export default function AppHeader() {
   const [location, setLocation] = useLocation();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { language, setLanguage } = useLanguage();
+  const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
+
+  // Keep in sync when email is captured in same tab or another tab
+  useEffect(() => {
+    const onCaptured = (e: Event) => setUserEmail((e as CustomEvent).detail);
+    const onStorage = () => setUserEmail(localStorage.getItem("userEmail"));
+    window.addEventListener("userEmailCaptured", onCaptured);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("userEmailCaptured", onCaptured);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
 
   const navLink = (label: string, path: string) => {
     const isActive = location === path;
@@ -77,13 +90,19 @@ export default function AppHeader() {
 
             <div className="w-px h-5 bg-stone-200 mx-2" />
 
-            <Button
-              size="sm"
-              onClick={() => setShowLoginModal(true)}
-              className="rounded-full h-9 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold shadow-sm shadow-orange-900/15 transition-transform active:scale-[0.97]"
-            >
-              Login
-            </Button>
+            {userEmail ? (
+              <span className="text-sm font-medium text-foreground/70 truncate max-w-[200px]">
+                Hi, {userEmail}
+              </span>
+            ) : (
+              <Button
+                size="sm"
+                onClick={() => setShowLoginModal(true)}
+                className="rounded-full h-9 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold shadow-sm shadow-orange-900/15 transition-transform active:scale-[0.97]"
+              >
+                Login / Signup
+              </Button>
+            )}
           </nav>
 
           {/* Mobile menu */}
@@ -104,12 +123,18 @@ export default function AppHeader() {
                 </button>
               ))}
             </div>
-            <button
-              className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-2 py-1"
-              onClick={() => setShowLoginModal(true)}
-            >
-              Login
-            </button>
+            {userEmail ? (
+              <span className="text-xs font-medium text-foreground/60 truncate max-w-[120px]">
+                Hi, {userEmail.split("@")[0]}
+              </span>
+            ) : (
+              <button
+                className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-2 py-1"
+                onClick={() => setShowLoginModal(true)}
+              >
+                Login / Signup
+              </button>
+            )}
           </div>
 
         </div>

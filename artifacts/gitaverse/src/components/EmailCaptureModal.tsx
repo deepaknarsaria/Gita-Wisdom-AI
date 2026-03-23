@@ -41,6 +41,7 @@ function EmailCaptureContent({ onClose }: { onClose: () => void }) {
     localStorage.setItem(STORAGE_KEY, trimmed);
     localStorage.setItem("userEmail", trimmed);
     console.log("New user email captured:", trimmed);
+    window.dispatchEvent(new CustomEvent("userEmailCaptured", { detail: trimmed }));
     setSubmitted(true);
     setTimeout(() => {
       onClose();
