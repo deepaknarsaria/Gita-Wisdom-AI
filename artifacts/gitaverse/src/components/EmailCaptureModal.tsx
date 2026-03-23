@@ -107,10 +107,10 @@ function EmailCaptureContent({ onClose }: { onClose: () => void }) {
                     <Flower2 className="w-6 h-6 text-primary" />
                   </div>
                   <h2 className="font-display text-xl font-bold text-foreground leading-tight mb-2">
-                    Get Daily Gita Wisdom
+                    Get Deeper Gita Guidance
                   </h2>
                   <p className="text-sm text-foreground/60 font-medium leading-relaxed">
-                    Daily shloka, reflections &amp; guidance — straight to your inbox. Free, always.
+                    Enter your email to save your progress and receive wisdom updates.
                   </p>
                 </div>
 
@@ -135,7 +135,7 @@ function EmailCaptureContent({ onClose }: { onClose: () => void }) {
                     type="submit"
                     className="w-full rounded-2xl py-6 text-base font-semibold bg-primary hover:bg-primary/90 text-white shadow-md shadow-orange-900/15 transition-transform active:scale-[0.98]"
                   >
-                    Join Free
+                    Continue
                   </Button>
 
                   <p className="text-center text-[11px] text-muted-foreground/50 font-light">

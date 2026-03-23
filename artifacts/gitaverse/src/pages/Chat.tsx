@@ -92,6 +92,28 @@ export default function Chat() {
   const { toast } = useToast();
   const { activeId: speakingId, state: speechState, toggle: toggleSpeech, stop: stopSpeech } = useSpeech();
 
+  // First visit — show email capture after short delay if never seen before
+  useEffect(() => {
+    if (!canShowEmail()) return;
+    const isFirstVisit = !localStorage.getItem("gitaverse_visited");
+    if (isFirstVisit) {
+      localStorage.setItem("gitaverse_visited", "1");
+      const timer = setTimeout(() => {
+        if (canShowEmail()) setIsEmailOpen(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // After 2 messages — show email capture if not already captured
+  useEffect(() => {
+    if (!conversation || !canShowEmail() || isEmailOpen) return;
+    const userMsgCount = (conversation.messages as any[]).filter((m) => m.role === "user").length;
+    if (userMsgCount >= 2) {
+      setIsEmailOpen(true);
+    }
+  }, [conversation?.messages?.length]);
+
   // Exit intent — show email capture when cursor leaves to top of page
   useEffect(() => {
     const handleMouseLeave = (e: MouseEvent) => {
