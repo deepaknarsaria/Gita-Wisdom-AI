@@ -85,6 +85,37 @@ export default function Home() {
     setPaidPlan(plan);
   };
 
+  const openPayment = (plan: string) => {
+    const amounts: Record<string, number> = { basic: 19900, pro: 29900, premium: 39900 };
+    const RazorpayConstructor = (window as any).Razorpay;
+    if (!RazorpayConstructor) {
+      selectPendingPlan(plan);
+      window.open(
+        plan === "basic" ? "https://rzp.io/rzp/wAkwfr27"
+        : plan === "pro" ? "https://rzp.io/rzp/RakQ9by6"
+        : "https://rzp.io/rzp/LxnETJ7",
+        "_blank"
+      );
+      return;
+    }
+    const options = {
+      key: "rzp_live_SUa0XQexnTb8ri",
+      amount: amounts[plan],
+      currency: "INR",
+      name: "GitaVerse",
+      description: `${plan.charAt(0).toUpperCase() + plan.slice(1)} Plan — 30 days`,
+      image: `${import.meta.env.BASE_URL}favicon.svg`,
+      theme: { color: "#e07a2b" },
+      modal: { ondismiss: () => selectPendingPlan(plan) },
+      handler: (response: any) => {
+        console.log("Payment success", response.razorpay_payment_id);
+        activatePlan(plan);
+      },
+    };
+    const rzp = new RazorpayConstructor(options);
+    rzp.open();
+  };
+
   const activatePlan = (plan: string) => {
     const chatLimitMap: Record<string, number | "unlimited"> = {
       basic: 50,
@@ -548,7 +579,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => { window.open("https://rzp.io/rzp/wAkwfr27", "_blank"); selectPendingPlan("basic"); }}
+                  onClick={() => openPayment("basic")}
                   className="w-full py-3 rounded-full border-2 border-orange-200 text-primary text-sm font-semibold hover:bg-orange-50 transition-colors"
                 >
                   Start Basic
@@ -591,7 +622,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => { window.open("https://rzp.io/rzp/RakQ9by6", "_blank"); selectPendingPlan("pro"); }}
+                  onClick={() => openPayment("pro")}
                   className="w-full py-3 rounded-full bg-gradient-to-r from-primary to-orange-400 text-white text-sm font-bold hover:from-primary/90 hover:to-orange-500 shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5"
                 >
                   Choose Pro
@@ -634,7 +665,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <button
-                  onClick={() => { window.open("https://rzp.io/rzp/LxnETJ7", "_blank"); selectPendingPlan("premium"); }}
+                  onClick={() => openPayment("premium")}
                   className="w-full py-3 rounded-full border-2 border-amber-400 text-amber-700 text-sm font-bold hover:bg-amber-50 transition-colors"
                 >
                   Go Premium
