@@ -16,8 +16,6 @@ import { useSpeech } from "@/hooks/useSpeech";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const FREE_LIMIT = 5;
-const STORAGE_KEY = "gitaverse_free_used";
-const PREMIUM_KEY = "gitaverse_premium";
 
 // --- Plan limit helpers ---
 function getActivePlan(): string | null {
@@ -30,18 +28,11 @@ function getChatLimit(): number | "unlimited" {
   return parseInt(raw, 10);
 }
 function getPlanChatsUsed(): number {
-  const plan = getActivePlan();
-  if (plan) return parseInt(localStorage.getItem("chatsUsed") || "0", 10);
-  return parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+  return parseInt(localStorage.getItem("chatsUsed") || "0", 10);
 }
-function incrementChats(isPaidPlan: boolean) {
-  if (isPaidPlan) {
-    const next = parseInt(localStorage.getItem("chatsUsed") || "0", 10) + 1;
-    localStorage.setItem("chatsUsed", String(next));
-  } else {
-    const next = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10) + 1;
-    localStorage.setItem(STORAGE_KEY, String(next));
-  }
+function incrementChats() {
+  const next = parseInt(localStorage.getItem("chatsUsed") || "0", 10) + 1;
+  localStorage.setItem("chatsUsed", String(next));
 }
 
 function formatForShare(text: string): string {
@@ -69,7 +60,10 @@ export default function Chat() {
   const [hasSentInitial, setHasSentInitial] = useState(false);
   const [activePlan] = useState<string | null>(getActivePlan);
   const [chatsUsed, setChatsUsed] = useState<number>(getPlanChatsUsed);
-  const [isPremium, setIsPremium] = useState<boolean>(() => !!getActivePlan());
+  const [isPremium, setIsPremium] = useState<boolean>(() => {
+    const p = getActivePlan();
+    return !!p && p !== "free";
+  });
   const [deepGuidance, setDeepGuidance] = useState(false);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -138,11 +132,11 @@ export default function Chat() {
 
   // Sync chatsUsed: take whichever is higher — localStorage or DB user message count
   useEffect(() => {
-    if (conversation && !activePlan) {
+    if (conversation) {
       const dbUserCount = (conversation.messages as any[]).filter(m => m.role === "user").length;
-      const stored = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+      const stored = parseInt(localStorage.getItem("chatsUsed") || "0", 10);
       const synced = Math.max(stored, dbUserCount);
-      localStorage.setItem(STORAGE_KEY, String(synced));
+      localStorage.setItem("chatsUsed", String(synced));
       setChatsUsed(synced);
     }
   }, [conversation?.id]);
@@ -153,7 +147,7 @@ export default function Chat() {
       setHasSentInitial(true);
       const next = chatsUsed + 1;
       setChatsUsed(next);
-      incrementChats(!!activePlan);
+      incrementChats();
       sendMessage(initialPrompt, false, language);
       
       // Clean up URL to avoid resending on refresh
@@ -183,7 +177,7 @@ export default function Chat() {
 
     const next = chatsUsed + 1;
     setChatsUsed(next);
-    incrementChats(!!activePlan);
+    incrementChats();
 
     const userMessage = input;
     setInput("");
@@ -599,6 +593,24 @@ export default function Chat() {
                   )}
                 </button>
               </div>
+
+              {/* Soft upgrade CTA for free users after 3rd message */}
+              {activePlan === "free" && chatsUsed >= 3 && !isLimitReached && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex justify-center mt-1"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setIsPaywallOpen(true)}
+                    className="flex items-center gap-1.5 text-[12px] font-semibold text-primary hover:text-orange-600 transition-colors underline underline-offset-2"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    Upgrade for deeper Gita guidance
+                  </button>
+                </motion.div>
+              )}
             </>
           )}
           {!isLimitReached && (

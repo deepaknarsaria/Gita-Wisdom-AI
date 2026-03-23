@@ -1,0 +1,108 @@
+Implement complete free plan onboarding and upgrade flow.
+
+GOAL:
+Every new user starts with a free plan (5 chats), sees usage clearly, and is prompted to upgrade after limit.
+
+-----------------------------------
+1. INITIALIZE FREE PLAN (CRITICAL)
+-----------------------------------
+
+When user enters email OR visits app:
+
+IF localStorage does NOT have "plan":
+- Set plan = "free"
+- Set chatLimit = 5
+- Set chatsUsed = 0
+- Set expiryDate = null
+
+Ensure:
+- This runs only once for new users
+
+-----------------------------------
+2. CHECK PLAN ON APP LOAD
+-----------------------------------
+
+On every app load:
+
+IF no plan exists:
+- Assign free plan automatically
+
+Ensure:
+- No user can bypass free plan
+
+-----------------------------------
+3. TRACK CHAT USAGE
+-----------------------------------
+
+Before sending message:
+
+IF plan = "free" AND chatsUsed >= 5:
+- Block message
+- Show upgrade popup
+- RETURN
+
+ELSE:
+- Allow message
+- Increment chatsUsed by 1
+- Save in localStorage
+
+-----------------------------------
+4. DISPLAY USAGE UI
+-----------------------------------
+
+Show usage bar at top of chat:
+
+IF plan = "free":
+- Show "Free Plan"
+- Show: chatsUsed / 5
+
+IF plan = "basic":
+- Show: chatsUsed / 50
+
+IF plan = "pro":
+- Show: chatsUsed / 150
+
+IF plan = "premium":
+- Show "Unlimited Access"
+
+-----------------------------------
+5. SHOW UPGRADE CTA
+-----------------------------------
+
+IF plan = "free":
+
+- Show button:
+  "Upgrade for deeper Gita guidance"
+
+Placement:
+- Below chat input
+- Also after 3rd message (soft push)
+
+-----------------------------------
+6. UPGRADE TRIGGER
+-----------------------------------
+
+When user hits limit OR clicks upgrade:
+
+- Show pricing section OR open Razorpay flow
+
+-----------------------------------
+7. SAFETY CHECK
+-----------------------------------
+
+Ensure:
+
+- No user can send message after limit
+- chatsUsed is always saved properly
+- plan persists after refresh
+
+-----------------------------------
+FINAL RESULT:
+
+- New users → Free plan (5 chats)
+- After 5 chats → blocked
+- Upgrade prompt shown
+- Paid users follow their limits
+
+Goal:
+Create a proper SaaS free-to-paid conversion flow.

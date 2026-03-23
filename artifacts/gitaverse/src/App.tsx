@@ -39,10 +39,19 @@ function Router() {
   );
 }
 
+function initFreePlan() {
+  if (!localStorage.getItem("plan")) {
+    localStorage.setItem("plan", "free");
+    localStorage.setItem("chatLimit", "5");
+    localStorage.setItem("chatsUsed", "0");
+  }
+}
+
 function App() {
   const [emailOpen, setEmailOpen] = useState(false);
 
   useEffect(() => {
+    initFreePlan();
     return onOpenEmailPopup(() => setEmailOpen(true));
   }, []);
 
