@@ -15,30 +15,19 @@ function logoutUser() {
   localStorage.removeItem("gitaverse_visited");
   localStorage.removeItem("gitaverse_email");
   localStorage.removeItem("gitaverse_email_dismissed");
-  location.reload();
+  window.location.reload();
 }
 
-export default function AppHeader() {
-  const [location, setLocation] = useLocation();
-  const { language, setLanguage } = useLanguage();
-  const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
+interface UserMenuProps {
+  email: string;
+  mobile?: boolean;
+}
+
+function UserMenu({ email, mobile = false }: UserMenuProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Keep in sync when email is captured in same tab or another tab
-  useEffect(() => {
-    const onCaptured = (e: Event) => setUserEmail((e as CustomEvent).detail);
-    const onStorage = () => setUserEmail(localStorage.getItem("userEmail"));
-    window.addEventListener("userEmailCaptured", onCaptured);
-    window.addEventListener("storage", onStorage);
-    return () => {
-      window.removeEventListener("userEmailCaptured", onCaptured);
-      window.removeEventListener("storage", onStorage);
-    };
-  }, []);
-
-  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -50,37 +39,13 @@ export default function AppHeader() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLoginClick = () => openEmailPopup();
-
-  const navLink = (label: string, path: string) => {
-    const isActive = location === path;
-    return (
-      <button
-        onClick={() => setLocation(path)}
-        className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-          isActive
-            ? "text-primary"
-            : "text-foreground/60 hover:text-foreground"
-        }`}
-      >
-        {label}
-        {isActive && (
-          <motion.span
-            layoutId="nav-underline"
-            className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full bg-primary"
-          />
-        )}
-      </button>
-    );
-  };
-
-  const UserMenu = ({ mobile = false }: { mobile?: boolean }) => (
+  return (
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => { setShowMenu(p => !p); setShowConfirm(false); }}
         className={`flex items-center gap-1 font-medium text-foreground/70 hover:text-foreground transition-colors ${mobile ? "text-xs max-w-[120px]" : "text-sm max-w-[200px]"}`}
       >
-        <span className="truncate">Hi, {mobile ? userEmail!.split("@")[0] : userEmail}</span>
+        <span className="truncate">Hi, {mobile ? email.split("@")[0] : email}</span>
         <ChevronDown className={`shrink-0 transition-transform duration-200 ${showMenu ? "rotate-180" : ""} ${mobile ? "w-3 h-3" : "w-3.5 h-3.5"}`} />
       </button>
 
@@ -91,11 +56,11 @@ export default function AppHeader() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className={`absolute ${mobile ? "right-0" : "right-0"} top-full mt-2 w-52 rounded-2xl bg-white border border-stone-100 shadow-xl shadow-black/8 z-50 overflow-hidden`}
+            className="absolute right-0 top-full mt-2 w-52 rounded-2xl bg-white border border-stone-100 shadow-xl shadow-black/8 z-50 overflow-hidden"
           >
             <div className="px-4 py-3 border-b border-stone-100">
               <p className="text-[11px] text-muted-foreground/60 font-medium">Signed in as</p>
-              <p className="text-[12px] font-semibold text-foreground truncate mt-0.5">{userEmail}</p>
+              <p className="text-[12px] font-semibold text-foreground truncate mt-0.5">{email}</p>
             </div>
 
             {!showConfirm ? (
@@ -132,96 +97,130 @@ export default function AppHeader() {
       </AnimatePresence>
     </div>
   );
+}
+
+export default function AppHeader() {
+  const [location, setLocation] = useLocation();
+  const { language, setLanguage } = useLanguage();
+  const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
+
+  useEffect(() => {
+    const onCaptured = (e: Event) => setUserEmail((e as CustomEvent).detail);
+    const onStorage = () => setUserEmail(localStorage.getItem("userEmail"));
+    window.addEventListener("userEmailCaptured", onCaptured);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("userEmailCaptured", onCaptured);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
+
+  const navLink = (label: string, path: string) => {
+    const isActive = location === path;
+    return (
+      <button
+        onClick={() => setLocation(path)}
+        className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+          isActive ? "text-primary" : "text-foreground/60 hover:text-foreground"
+        }`}
+      >
+        {label}
+        {isActive && (
+          <motion.span
+            layoutId="nav-underline"
+            className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full bg-primary"
+          />
+        )}
+      </button>
+    );
+  };
 
   return (
-    <>
-      <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-stone-100 shadow-[0_1px_12px_rgba(0,0,0,0.06)] shrink-0">
-        <div className="max-w-6xl mx-auto px-6 sm:px-10 h-[62px] flex items-center justify-between gap-8">
+    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-stone-100 shadow-[0_1px_12px_rgba(0,0,0,0.06)] shrink-0">
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 h-[62px] flex items-center justify-between gap-8">
 
-          {/* Logo */}
-          <button
-            onClick={() => setLocation("/")}
-            className="flex items-center gap-0 select-none group"
-          >
-            <span className="text-[22px] font-display font-extrabold tracking-tight text-foreground group-hover:opacity-85 transition-opacity">
-              Gita
-            </span>
-            <span className="text-[22px] font-display font-extrabold tracking-tight text-primary group-hover:opacity-85 transition-opacity">
-              Verse
-            </span>
-          </button>
+        {/* Logo */}
+        <button
+          onClick={() => setLocation("/")}
+          className="flex items-center gap-0 select-none group"
+        >
+          <span className="text-[22px] font-display font-extrabold tracking-tight text-foreground group-hover:opacity-85 transition-opacity">
+            Gita
+          </span>
+          <span className="text-[22px] font-display font-extrabold tracking-tight text-primary group-hover:opacity-85 transition-opacity">
+            Verse
+          </span>
+        </button>
 
-          {/* Desktop nav */}
-          <nav className="hidden sm:flex items-center gap-1">
-            {navLink("About", "/about")}
-            {navLink("Daily Wisdom", "/daily-wisdom")}
+        {/* Desktop nav */}
+        <nav className="hidden sm:flex items-center gap-1">
+          {navLink("About", "/about")}
+          {navLink("Daily Wisdom", "/daily-wisdom")}
 
-            <div className="w-px h-5 bg-stone-200 mx-2" />
+          <div className="w-px h-5 bg-stone-200 mx-2" />
 
-            {/* Language toggle */}
-            <div className="flex items-center bg-stone-100 rounded-full p-[3px] gap-[2px]">
-              {(["EN", "HI"] as const).map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => setLanguage(lang)}
-                  className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide transition-all duration-200 ${
-                    language === lang
-                      ? "bg-white text-primary shadow-sm shadow-orange-900/10"
-                      : "text-foreground/40 hover:text-foreground/70"
-                  }`}
-                >
-                  {lang}
-                </button>
-              ))}
-            </div>
-
-            <div className="w-px h-5 bg-stone-200 mx-2" />
-
-            {userEmail ? (
-              <UserMenu />
-            ) : (
-              <Button
-                size="sm"
-                onClick={handleLoginClick}
-                className="rounded-full h-9 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold shadow-sm shadow-orange-900/15 transition-transform active:scale-[0.97]"
-              >
-                Login / Signup
-              </Button>
-            )}
-          </nav>
-
-          {/* Mobile menu */}
-          <div className="sm:hidden flex items-center gap-2">
-            {/* Language toggle mobile */}
-            <div className="flex items-center bg-stone-100 rounded-full p-[3px] gap-[2px]">
-              {(["EN", "HI"] as const).map((lang) => (
-                <button
-                  key={lang}
-                  onClick={() => setLanguage(lang)}
-                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide transition-all duration-200 ${
-                    language === lang
-                      ? "bg-white text-primary shadow-sm shadow-orange-900/10"
-                      : "text-foreground/40 hover:text-foreground/70"
-                  }`}
-                >
-                  {lang}
-                </button>
-              ))}
-            </div>
-            {userEmail ? (
-              <UserMenu mobile />
-            ) : (
+          <div className="flex items-center bg-stone-100 rounded-full p-[3px] gap-[2px]">
+            {(["EN", "HI"] as const).map((lang) => (
               <button
-                className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-2 py-1"
-                onClick={handleLoginClick}
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                className={`px-3 py-1 rounded-full text-[11px] font-bold tracking-wide transition-all duration-200 ${
+                  language === lang
+                    ? "bg-white text-primary shadow-sm shadow-orange-900/10"
+                    : "text-foreground/40 hover:text-foreground/70"
+                }`}
               >
-                Login / Signup
+                {lang}
               </button>
-            )}
+            ))}
           </div>
 
+          <div className="w-px h-5 bg-stone-200 mx-2" />
+
+          {userEmail ? (
+            <UserMenu email={userEmail} />
+          ) : (
+            <Button
+              size="sm"
+              onClick={() => openEmailPopup()}
+              className="rounded-full h-9 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold shadow-sm shadow-orange-900/15 transition-transform active:scale-[0.97]"
+            >
+              Login / Signup
+            </Button>
+          )}
+        </nav>
+
+        {/* Mobile menu */}
+        <div className="sm:hidden flex items-center gap-2">
+          <div className="flex items-center bg-stone-100 rounded-full p-[3px] gap-[2px]">
+            {(["EN", "HI"] as const).map((lang) => (
+              <button
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide transition-all duration-200 ${
+                  language === lang
+                    ? "bg-white text-primary shadow-sm shadow-orange-900/10"
+                    : "text-foreground/40 hover:text-foreground/70"
+                }`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+
+          {userEmail ? (
+            <UserMenu email={userEmail} mobile />
+          ) : (
+            <button
+              className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-2 py-1"
+              onClick={() => openEmailPopup()}
+            >
+              Login / Signup
+            </button>
+          )}
         </div>
-      </header>
-    </>
+
+      </div>
+    </header>
   );
 }
