@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
 import { useLocation } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, Clock } from "lucide-react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import EmailCaptureModal from "@/components/EmailCaptureModal";
 
 export default function AppHeader() {
   const [location, setLocation] = useLocation();
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const { language, setLanguage } = useLanguage();
   const [userEmail, setUserEmail] = useState<string | null>(() => localStorage.getItem("userEmail"));
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
 
   // Keep in sync when email is captured in same tab or another tab
   useEffect(() => {
@@ -23,6 +22,14 @@ export default function AppHeader() {
       window.removeEventListener("storage", onStorage);
     };
   }, []);
+
+  const handleLoginClick = () => {
+    if (userEmail) {
+      alert("You are already logged in");
+    } else {
+      setShowEmailCapture(true);
+    }
+  };
 
   const navLink = (label: string, path: string) => {
     const isActive = location === path;
@@ -97,7 +104,7 @@ export default function AppHeader() {
             ) : (
               <Button
                 size="sm"
-                onClick={() => setShowLoginModal(true)}
+                onClick={handleLoginClick}
                 className="rounded-full h-9 px-5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold shadow-sm shadow-orange-900/15 transition-transform active:scale-[0.97]"
               >
                 Login / Signup
@@ -130,7 +137,7 @@ export default function AppHeader() {
             ) : (
               <button
                 className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-2 py-1"
-                onClick={() => setShowLoginModal(true)}
+                onClick={handleLoginClick}
               >
                 Login / Signup
               </button>
@@ -140,63 +147,10 @@ export default function AppHeader() {
         </div>
       </header>
 
-      {/* Login Modal */}
-      {createPortal(
-        <AnimatePresence>
-          {showLoginModal && (
-            <>
-              <motion.div
-                key="login-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setShowLoginModal(false)}
-                style={{ position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.35)", backdropFilter: "blur(4px)" }}
-              />
-              <motion.div
-                key="login-modal"
-                initial={{ opacity: 0, scale: 0.93, y: 24 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.93, y: 24 }}
-                transition={{ type: "spring", stiffness: 320, damping: 28 }}
-                style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}
-              >
-                <div className="w-full max-w-sm bg-white rounded-[2rem] shadow-2xl shadow-orange-900/10 border border-orange-100 overflow-hidden">
-                  <div className="bg-gradient-to-br from-orange-50 to-amber-50/50 px-7 pt-8 pb-7 border-b border-orange-100/60 relative">
-                    <button
-                      onClick={() => setShowLoginModal(false)}
-                      className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-foreground/40 hover:text-foreground hover:bg-orange-100/60 transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                    <div className="flex items-center gap-3 mb-1">
-                      <div className="w-10 h-10 rounded-full bg-white border border-orange-200 flex items-center justify-center shadow-sm">
-                        <Clock className="w-5 h-5 text-primary" />
-                      </div>
-                      <h2 className="font-display text-xl font-bold text-foreground">Login</h2>
-                    </div>
-                    <span className="inline-block text-[11px] font-semibold uppercase tracking-widest text-primary/70 bg-primary/8 border border-primary/15 px-2.5 py-0.5 rounded-full mt-1">
-                      Coming Soon
-                    </span>
-                  </div>
-                  <div className="px-7 py-7">
-                    <p className="text-[15px] text-foreground/70 leading-relaxed mb-7">
-                      We are building a personalized experience for you. Login feature will be available soon.
-                    </p>
-                    <Button
-                      onClick={() => setShowLoginModal(false)}
-                      className="w-full rounded-2xl h-11 bg-primary hover:bg-primary/90 text-white font-semibold shadow-md shadow-orange-900/10 transition-transform active:scale-[0.98]"
-                    >
-                      Got it
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+      <EmailCaptureModal
+        open={showEmailCapture}
+        onClose={() => setShowEmailCapture(false)}
+      />
     </>
   );
 }
