@@ -86,7 +86,18 @@ export default function Home() {
   };
 
   const activatePlan = (plan: string) => {
+    const chatLimitMap: Record<string, number | "unlimited"> = {
+      basic: 50,
+      pro: 150,
+      premium: "unlimited",
+    };
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 30);
+
     localStorage.setItem("gitaverse_premium", plan);
+    localStorage.setItem("gitaverse_chat_limit", String(chatLimitMap[plan]));
+    localStorage.setItem("gitaverse_chats_used", "0");
+    localStorage.setItem("gitaverse_expiry", expiry.toISOString());
     localStorage.removeItem("gitaverse_pending_plan");
     setPaidPlan(null);
     setActivatedPlan(plan);
@@ -664,7 +675,7 @@ export default function Home() {
                       {activatedPlan} Plan Activated!
                     </h3>
                     <p className="text-sm text-foreground/55 font-light">
-                      Welcome to GitaVerse. Your access is now unlocked — start your journey.
+                      Your plan is now active. Enjoy your Gita guidance.
                     </p>
                     <button
                       onClick={() => handleStartChat()}
