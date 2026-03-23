@@ -116,12 +116,8 @@ export default function Home() {
   };
 
   function verifyPayment(response: any, plan: string) {
-    if (
-      !response.razorpay_payment_id ||
-      !response.razorpay_order_id ||
-      !response.razorpay_signature
-    ) {
-      alert("Payment not completed properly");
+    if (!response.razorpay_payment_id) {
+      alert("Payment failed or cancelled");
       return;
     }
 
