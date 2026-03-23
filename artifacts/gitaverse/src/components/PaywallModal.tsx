@@ -1,7 +1,6 @@
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Flower2, Zap, MessageCircle, Infinity, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Flower2, Zap, MessageCircle, Infinity } from "lucide-react";
 
 interface PaywallModalProps {
   open: boolean;
@@ -19,6 +18,7 @@ const PLANS = [
     color: "text-blue-500",
     bg: "bg-blue-50",
     border: "border-blue-200",
+    link: "https://rzp.io/rzp/wAkwfr27",
   },
   {
     key: "pro",
@@ -30,6 +30,7 @@ const PLANS = [
     bg: "bg-orange-50",
     border: "border-orange-200",
     highlight: true,
+    link: "https://rzp.io/rzp/RakQ9by6",
   },
   {
     key: "premium",
@@ -40,10 +41,11 @@ const PLANS = [
     color: "text-amber-600",
     bg: "bg-amber-50",
     border: "border-amber-300",
+    link: "https://rzp.io/rzp/LxnETJ7",
   },
 ];
 
-function PaywallContent({ onUpgrade, onClose }: { onUpgrade: () => void; onClose?: () => void }) {
+function PaywallContent({ onClose }: { onUpgrade: () => void; onClose?: () => void }) {
   return (
     <>
       {/* Backdrop */}
@@ -89,17 +91,20 @@ function PaywallContent({ onUpgrade, onClose }: { onUpgrade: () => void; onClose
             </p>
           </div>
 
-          {/* Plans */}
-          <div className="px-6 pt-5 pb-3 flex flex-col gap-3">
+          {/* Plans — each card opens the direct Razorpay link */}
+          <div className="px-6 pt-5 pb-6 flex flex-col gap-3">
             {PLANS.map((plan) => {
               const Icon = plan.icon;
               return (
-                <div
+                <a
                   key={plan.key}
-                  className={`flex items-center justify-between rounded-2xl border-2 px-5 py-4 ${
+                  href={plan.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex items-center justify-between rounded-2xl border-2 px-5 py-4 transition-all duration-150 active:scale-[0.98] cursor-pointer hover:shadow-md ${
                     plan.highlight
-                      ? "border-primary/30 bg-gradient-to-r from-orange-50/80 to-amber-50/50"
-                      : `${plan.border} ${plan.bg}/50`
+                      ? "border-primary/40 bg-gradient-to-r from-orange-50/80 to-amber-50/50 hover:border-primary/60"
+                      : `${plan.border} ${plan.bg}/50 hover:border-opacity-80`
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -118,22 +123,14 @@ function PaywallContent({ onUpgrade, onClose }: { onUpgrade: () => void; onClose
                       <span className="text-[11px] text-foreground/50 font-medium">{plan.chats}</span>
                     </div>
                   </div>
-                  <span className={`text-base font-extrabold ${plan.color}`}>{plan.price}</span>
-                </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-base font-extrabold ${plan.color}`}>{plan.price}</span>
+                    <span className={`text-xs font-bold ${plan.color} opacity-60`}>→</span>
+                  </div>
+                </a>
               );
             })}
-          </div>
-
-          {/* CTA */}
-          <div className="px-6 pb-7 pt-2">
-            <Button
-              onClick={onUpgrade}
-              className="w-full rounded-2xl h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-white shadow-lg shadow-orange-900/15 transition-transform active:scale-[0.98] flex items-center justify-center gap-2"
-            >
-              View Plans & Pay
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-            <p className="text-center text-[11px] text-muted-foreground/50 mt-3 font-medium">
+            <p className="text-center text-[11px] text-muted-foreground/50 mt-1 font-medium">
               Secure payment via Razorpay · Instant activation
             </p>
           </div>
